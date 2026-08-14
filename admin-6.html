@@ -1,0 +1,3335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CB — Master Admin</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--p:#1a56db;--pd:#1e429f;--pl:#e1effe;--ok:#057a55;--okb:#def7ec;--bad:#c81e1e;--badb:#fde8e8;--warn:#c27803;--warnb:#fdf6b2;--g50:#f9fafb;--g100:#f3f4f6;--g200:#e5e7eb;--g300:#d1d5db;--g400:#9ca3af;--g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;--sw:250px}
+body{font-family:system-ui,Segoe UI,sans-serif;background:var(--g100);color:var(--g800);min-height:100vh}
+.hidden{display:none!important}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e3a8a,#1a56db,#3b82f6);padding:20px}
+.login-card{background:#fff;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.15)}
+.login-card .logo{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:700;font-size:1.25rem;color:var(--p);margin-bottom:12px}
+.login-card h1{text-align:center;font-size:1.5rem;margin-bottom:6px}
+.login-card .sub{text-align:center;color:var(--g500);font-size:.9rem;margin-bottom:24px}
+.fg{margin-bottom:16px}
+.fg label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px;color:var(--g700)}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--g300);border-radius:8px;font-size:.95rem;font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--p);box-shadow:0 0 0 3px rgba(26,86,219,.15)}
+textarea{min-height:100px;resize:vertical}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border:none;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer}
+.btn-p{background:var(--p);color:#fff}.btn-p:hover{background:var(--pd)}
+.btn-g{background:transparent;border:1.5px solid var(--g300);color:var(--g600)}
+.btn-ok{background:var(--ok);color:#fff}.btn-bad{background:var(--bad);color:#fff}
+.btn-warn{background:var(--warn);color:#fff}
+.btn-sm{padding:7px 12px;font-size:.8rem}
+.btn-block{width:100%}
+.hint{text-align:center;margin-top:16px;font-size:.85rem;color:var(--g500)}
+#dashboard{display:flex;min-height:100vh}
+.side{width:var(--sw);background:var(--g900);color:#fff;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:50}
+.side-h{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);font-weight:700;display:flex;align-items:center;gap:10px}
+.side-h i{color:#60a5fa}
+.nav{flex:1;padding:12px;display:flex;flex-direction:column;gap:4px;overflow:auto}
+.nav a{display:flex;align-items:center;gap:10px;padding:12px;border-radius:8px;color:var(--g400);text-decoration:none;font-weight:500;font-size:.9rem}
+.nav a:hover{background:rgba(255,255,255,.06);color:#fff}
+.nav a.on{background:var(--p);color:#fff}
+.nav a i{width:18px;text-align:center}
+.badge{margin-left:auto;background:var(--bad);color:#fff;font-size:.7rem;padding:2px 7px;border-radius:10px;font-weight:700}
+.nav a.on .badge{background:rgba(255,255,255,.3)}
+.side-f{padding:16px;border-top:1px solid rgba(255,255,255,.08)}
+.main{margin-left:var(--sw);flex:1;padding:0 24px 40px;max-width:1300px}
+.top{display:flex;align-items:center;justify-content:space-between;padding:22px 0 16px;gap:12px;flex-wrap:wrap}
+.top h2{font-size:1.4rem}
+.top-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sync{font-size:.8rem;color:var(--g500)}.sync.ok{color:var(--ok)}.sync.err{color:var(--bad)}
+.search{position:relative;width:240px}
+.search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--g400)}
+.search input{padding-left:36px;border-radius:10px;background:#fff}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.sc{background:#fff;border-radius:10px;padding:18px;display:flex;gap:14px;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.si{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.si.b{background:var(--pl);color:var(--p)}.si.g{background:var(--okb);color:var(--ok)}.si.o{background:var(--warnb);color:var(--warn)}.si.r{background:var(--badb);color:var(--bad)}
+.sv{font-size:1.35rem;font-weight:700}.sl{font-size:.85rem;color:var(--g500)}
+.card{background:#fff;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:hidden;margin-bottom:20px}
+.card-h{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--g200);flex-wrap:wrap;gap:10px}
+.card-h h3{font-size:1.05rem}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:12px 16px;font-size:.75rem;text-transform:uppercase;letter-spacing:.03em;color:var(--g500);background:var(--g50);border-bottom:1px solid var(--g200)}
+td{padding:12px 16px;border-bottom:1px solid var(--g100);font-size:.9rem;vertical-align:middle}
+tr:hover td{background:var(--g50)}
+.av{width:34px;height:34px;border-radius:50%;background:var(--pl);color:var(--p);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;margin-right:8px}
+.bal{font-weight:700;color:var(--ok)}
+.st{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.72rem;font-weight:600}
+.st-a{background:var(--okb);color:var(--ok)}.st-f{background:var(--badb);color:var(--bad)}.st-r{background:#ede9fe;color:#6d28d9}.st-p{background:var(--warnb);color:var(--warn)}
+.empty{text-align:center;padding:40px;color:var(--g400)}
+.tx{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--g100)}
+.txi{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.txi.up{background:var(--okb);color:var(--ok)}.txi.dn{background:var(--badb);color:var(--bad)}
+.overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px;backdrop-filter:blur(4px)}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:540px;max-height:90vh;overflow:auto;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+.modal-h{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid var(--g200)}
+.modal-h h3{font-size:1.1rem}
+.x{width:34px;height:34px;border:none;background:var(--g100);border-radius:8px;font-size:1.3rem;cursor:pointer;color:var(--g500)}
+.modal-b{padding:22px}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.pi label{display:block;font-size:.7rem;font-weight:600;text-transform:uppercase;color:var(--g400);margin-bottom:2px}
+.hr{border:none;border-top:1px solid var(--g200);margin:18px 0}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fa{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--g900);color:#fff;padding:12px 20px;border-radius:10px;z-index:2000;max-width:360px;font-size:.9rem}
+.toast.ok{background:var(--ok)}.toast.err{background:var(--bad)}
+.pending{border-left:4px solid var(--warn)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+/* Mail */
+.mail-layout{display:grid;grid-template-columns:280px 1fr;gap:0;min-height:480px}
+.mail-side{border-right:1px solid var(--g200);background:var(--g50)}
+.mail-side-item{padding:12px 16px;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--g600);display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--g100)}
+.mail-side-item:hover,.mail-side-item.on{background:#fff;color:var(--p)}
+.mail-list{max-height:520px;overflow:auto}
+.mail-row{padding:14px 18px;border-bottom:1px solid var(--g100);cursor:pointer;transition:background .12s}
+.mail-row:hover{background:var(--g50)}
+.mail-row.unread{background:#eff6ff}
+.mail-row .msubj{font-weight:700;font-size:.92rem;margin-bottom:3px}
+.mail-row .mmeta{font-size:.78rem;color:var(--g500);display:flex;justify-content:space-between;gap:8px}
+.mail-row .mprev{font-size:.82rem;color:var(--g600);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mail-read{padding:20px}
+.mail-read h3{font-size:1.15rem;margin-bottom:8px}
+.mail-read .mfrom{font-size:.85rem;color:var(--g500);margin-bottom:16px}
+.mail-read .mbody{font-size:.95rem;line-height:1.6;white-space:pre-wrap;background:var(--g50);padding:16px;border-radius:10px;border:1px solid var(--g200)}
+.mail-compose{padding:20px}
+.mail-tabs{display:flex;gap:8px;margin-bottom:12px}
+.mail-tabs button{padding:8px 14px;border-radius:8px;border:1.5px solid var(--g300);background:#fff;font-weight:600;font-size:.85rem;cursor:pointer}
+.mail-tabs button.on{background:var(--p);color:#fff;border-color:var(--p)}
+#delTabChoice.on,#delTabAgents.on,#delTabCustomers.on{background:var(--p);color:#fff;border-color:var(--p)}
+@media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.side{width:64px}.side-h span,.nav a span:not(.badge),.side-f .an{display:none}.nav a{justify-content:center}.main{margin-left:64px}.pg,.fr{grid-template-columns:1fr}.mail-layout{grid-template-columns:1fr}#del-choice>div{grid-template-columns:1fr!important}}
+@media(max-width:600px){.stats{grid-template-columns:1fr}}
+
+/* Chat (WhatsApp-style) */
+.chat-layout{display:grid;grid-template-columns:280px 1fr;min-height:520px;height:calc(100vh - 160px);max-height:700px}
+.chat-list{border-right:1px solid var(--g200);background:var(--g50);overflow:auto}
+.chat-list-item{padding:12px 14px;cursor:pointer;border-bottom:1px solid var(--g100);display:flex;gap:10px;align-items:center}
+.chat-list-item:hover,.chat-list-item.on{background:#fff}
+.chat-list-item .cav{width:40px;height:40px;border-radius:50%;background:var(--pl);color:var(--p);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+.chat-list-item .cmeta{min-width:0;flex:1}
+.chat-list-item .cname{font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-list-item .cprev{font-size:.78rem;color:var(--g500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-list-item .cbadge{background:var(--ok);color:#fff;font-size:.65rem;padding:2px 6px;border-radius:10px;font-weight:700}
+.chat-thread{display:flex;flex-direction:column;background:#e5ddd5;background-image:linear-gradient(rgba(229,221,213,.9),rgba(229,221,213,.9))}
+.chat-thread-h{padding:12px 16px;background:#fff;border-bottom:1px solid var(--g200);display:flex;align-items:center;gap:10px}
+.chat-msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.chat-bubble{max-width:75%;padding:10px 14px;border-radius:12px;font-size:.9rem;line-height:1.45;position:relative;word-break:break-word}
+.chat-bubble.them{background:#fff;align-self:flex-start;border-bottom-left-radius:4px;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.chat-bubble.me{background:#dcf8c6;align-self:flex-end;border-bottom-right-radius:4px;box-shadow:0 1px 1px rgba(0,0,0,.06)}
+.chat-bubble .ctime{font-size:.68rem;color:var(--g500);margin-top:4px;text-align:right}
+.chat-compose{padding:10px 12px;background:#f0f2f5;display:flex;gap:8px;align-items:flex-end;border-top:1px solid var(--g200)}
+.chat-compose textarea{flex:1;min-height:42px;max-height:120px;border-radius:22px;padding:10px 16px;border:none;resize:none;font-family:inherit;font-size:.9rem}
+.chat-compose button{border-radius:50%;width:44px;height:44px;padding:0;flex-shrink:0}
+/* Files accordion */
+.file-cust{border:1px solid var(--g200);border-radius:10px;margin-bottom:10px;overflow:hidden;background:#fff}
+.file-cust-h{padding:14px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;font-weight:600;user-select:none}
+.file-cust-h:hover{background:var(--g50)}
+.file-cust.open .file-cust-h{background:var(--pl);color:var(--p)}
+.file-cust-b{display:none;padding:0 16px 16px;border-top:1px solid var(--g100)}
+.file-cust.open .file-cust-b{display:block}
+.file-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.file-field label{font-size:.7rem;text-transform:uppercase;color:var(--g400);font-weight:600;display:block;margin-bottom:2px}
+.file-field div{font-size:.9rem;font-weight:500}
+.wallet-row{padding:14px 18px;border-bottom:1px solid var(--g100)}
+.wallet-row:hover{background:var(--g50)}
+.restrict-row{padding:14px 18px;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.restrict-row:hover{background:var(--g50)}
+@media(max-width:900px){.chat-layout{grid-template-columns:1fr;height:auto;max-height:none}.chat-list{max-height:220px}.file-grid{grid-template-columns:1fr}}
+
+
+/* ===== SUPER LUXURY MASTER ADMIN ===== */
+:root{
+  --p:#0A2A6B;--pd:#061B47;--pl:#F4F0E6;--gold:#C9A227;--gold-l:#E8D48B;--gold-d:#9A7B1A;
+  --ink:#0B1220;--cream:#FBF8F1;--cream-2:#F5F0E6;--pearl:#FFFEFB;
+  --ok:#0F766E;--okb:#CCFBF1;--bad:#B91C1C;--badb:#FEE2E2;
+  --warn:#B45309;--warnb:#FEF3C7;
+  --g50:#FAF8F4;--g100:#F3EFE6;--g200:#E8E2D4;--g300:#D4CBB8;
+  --g400:#A89A82;--g500:#7A6F5C;--g600:#5C5345;--g700:#3F3A30;
+  --g800:#2A261F;--g900:#14110E;--sw:280px;
+  --shadow:0 2px 8px rgba(10,20,40,.04),0 8px 28px rgba(10,20,40,.06);
+  --shadow-lg:0 12px 48px rgba(10,20,40,.14),0 2px 8px rgba(201,162,39,.08);
+  --shadow-gold:0 8px 32px rgba(201,162,39,.28);
+  --border-gold:1px solid rgba(201,162,39,.35);
+}
+body{
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,sans-serif;
+  background:
+    radial-gradient(ellipse 120% 80% at 100% -20%, rgba(201,162,39,.12), transparent 50%),
+    radial-gradient(ellipse 80% 60% at -10% 100%, rgba(10,42,107,.08), transparent 45%),
+    linear-gradient(165deg,#F7F4EC 0%,#EEE8DC 40%,#F5F1E8 100%);
+  color:var(--g800);
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+#login-screen{
+  background:
+    radial-gradient(circle at 20% 30%, rgba(201,162,39,.25), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(10,42,107,.5), transparent 45%),
+    linear-gradient(145deg,#040B1A 0%,#0A2A6B 42%,#061B47 70%,#C9A227 160%);
+  position:relative;overflow:hidden;
+}
+#login-screen::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(201,162,39,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,162,39,.04) 1px, transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse at center, black 20%, transparent 75%);
+}
+.login-card{
+  border-radius:24px;padding:48px 44px;
+  background:linear-gradient(180deg,#FFFEFB 0%,#FBF8F1 100%);
+  box-shadow:var(--shadow-lg),0 0 0 1px rgba(201,162,39,.2),inset 0 1px 0 rgba(255,255,255,.9);
+  border:1px solid rgba(201,162,39,.28);
+  position:relative;z-index:1;
+}
+.login-card::before{
+  content:'';position:absolute;top:0;left:24px;right:24px;height:3px;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--gold-l),var(--gold),transparent);
+  border-radius:0 0 4px 4px;
+}
+.login-card .logo{
+  color:var(--p);font-size:1.05rem;letter-spacing:.18em;text-transform:uppercase;
+  font-weight:700;font-family:'Inter',sans-serif;
+}
+.login-card .logo i{color:var(--gold);font-size:1.35rem}
+.login-card h1{
+  font-family:'Playfair Display',Georgia,serif;font-size:1.85rem;color:var(--ink);
+  font-weight:700;letter-spacing:-.02em;margin-top:4px;
+}
+.login-card .sub{color:var(--g500);font-size:.88rem;letter-spacing:.04em}
+.fg label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--g500)}
+input,select,textarea{
+  border:1.5px solid var(--g200);border-radius:12px;background:var(--pearl);
+  transition:border-color .2s,box-shadow .2s;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,162,39,.15);
+}
+.btn{
+  border-radius:12px;font-weight:700;letter-spacing:.02em;
+  transition:transform .14s,filter .18s,box-shadow .25s;
+}
+.btn:active{transform:scale(.97)}
+.btn-p{
+  background:linear-gradient(135deg,var(--gold-l) 0%,var(--gold) 45%,var(--gold-d) 100%);
+  color:#0A2A6B;box-shadow:var(--shadow-gold),inset 0 1px 0 rgba(255,255,255,.35);
+  border:1px solid rgba(154,123,26,.3);
+}
+.btn-p:hover{filter:brightness(1.06);box-shadow:0 10px 36px rgba(201,162,39,.4)}
+.btn-ok{background:linear-gradient(135deg,#0F766E,#0D5C56);color:#fff}
+.btn-bad{background:linear-gradient(135deg,#B91C1C,#991B1B);color:#fff}
+.btn-warn{background:linear-gradient(135deg,#B45309,#92400E);color:#fff}
+.btn-g{background:transparent;border:1.5px solid var(--g300);color:var(--g600);border-radius:12px}
+.btn-g:hover{border-color:var(--gold);color:var(--p);background:rgba(201,162,39,.06)}
+.side{
+  background:
+    linear-gradient(180deg,rgba(201,162,39,.08) 0%,transparent 18%),
+    linear-gradient(185deg,#070D1C 0%,#0A1A3A 55%,#06122A 100%);
+  width:var(--sw);box-shadow:8px 0 40px rgba(4,11,26,.35);
+  border-right:1px solid rgba(201,162,39,.12);
+}
+.side-h{
+  padding:26px 22px;border-bottom:1px solid rgba(201,162,39,.15);
+  font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+  color:rgba(255,255,255,.92);
+}
+.side-h i{color:var(--gold);font-size:1.15rem;filter:drop-shadow(0 0 8px rgba(201,162,39,.45))}
+.nav{padding:16px 12px;gap:4px}
+.nav a{
+  border-radius:12px;padding:12px 14px;font-size:.84rem;
+  color:rgba(255,255,255,.48);transition:all .2s ease;font-weight:500;
+  border:1px solid transparent;
+}
+.nav a:hover{background:rgba(255,255,255,.06);color:#fff;border-color:rgba(201,162,39,.12)}
+.nav a.on{
+  background:linear-gradient(135deg,rgba(201,162,39,.22),rgba(201,162,39,.08));
+  color:#FBF8F1;border-color:rgba(201,162,39,.35);
+  box-shadow:inset 0 0 0 1px rgba(201,162,39,.15),0 4px 16px rgba(0,0,0,.2);
+}
+.nav a.on i{color:var(--gold-l)}
+.nav a i{width:20px;color:inherit;opacity:.9}
+.badge{
+  background:linear-gradient(135deg,#EF4444,#B91C1C);font-size:.62rem;
+  padding:2px 8px;border-radius:999px;box-shadow:0 2px 8px rgba(185,28,28,.35);
+}
+.side-f{
+  padding:18px 16px;border-top:1px solid rgba(201,162,39,.12);
+  background:rgba(0,0,0,.25);
+}
+.main{margin-left:var(--sw);padding:0 32px 56px;max-width:1440px}
+.top{padding:28px 0 20px;border-bottom:1px solid rgba(201,162,39,.15)}
+.top h2{
+  font-family:'Playfair Display',Georgia,serif;font-size:1.75rem;font-weight:700;
+  color:var(--ink);letter-spacing:-.02em;
+}
+.sync{
+  font-size:.75rem;font-weight:700;padding:7px 12px;border-radius:999px;
+  background:var(--pearl);border:1px solid var(--g200);letter-spacing:.03em;
+}
+.sync.ok{color:var(--ok);border-color:#99F6E4;background:var(--okb)}
+.sync.err{color:var(--bad);border-color:#FECACA;background:var(--badb)}
+.search input{
+  border-radius:999px;border:1.5px solid var(--g200);background:var(--pearl);
+  box-shadow:var(--shadow);padding-left:40px;
+}
+.search input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(201,162,39,.12)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-bottom:26px}
+.sc{
+  background:linear-gradient(165deg,#FFFEFB 0%,#FBF8F1 100%);
+  border-radius:18px;padding:20px 18px;box-shadow:var(--shadow);
+  border:1px solid rgba(201,162,39,.18);
+  transition:transform .2s,box-shadow .25s;position:relative;overflow:hidden;
+}
+.sc::after{
+  content:'';position:absolute;top:0;right:0;width:80px;height:80px;
+  background:radial-gradient(circle at top right,rgba(201,162,39,.12),transparent 70%);
+  pointer-events:none;
+}
+.sc:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.si{width:50px;height:50px;border-radius:14px;font-size:1.15rem}
+.si.b{background:linear-gradient(135deg,#0A2A6B,#0B3D91);color:var(--gold-l)}
+.si.g{background:linear-gradient(135deg,#0F766E,#14B8A6);color:#fff}
+.si.o{background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#fff}
+.si.r{background:linear-gradient(135deg,#B91C1C,#DC2626);color:#fff}
+.sv{
+  font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;font-weight:700;
+  color:var(--ink);letter-spacing:-.02em;
+}
+.sl{font-size:.78rem;color:var(--g500);font-weight:600;margin-top:2px;letter-spacing:.03em}
+.card{
+  background:linear-gradient(180deg,#FFFEFB,#FBF8F1);
+  border-radius:18px;box-shadow:var(--shadow);
+  border:1px solid rgba(201,162,39,.16);overflow:hidden;margin-bottom:22px;
+}
+.card-h{
+  padding:18px 22px;
+  background:linear-gradient(180deg,rgba(255,254,251,.95),rgba(251,248,241,.9));
+  border-bottom:1px solid rgba(201,162,39,.14);
+}
+.card-h h3{
+  font-family:'Playfair Display',Georgia,serif;font-size:1.1rem;font-weight:700;color:var(--ink);
+}
+.pending{border-left:4px solid var(--gold)}
+th{
+  font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  background:linear-gradient(180deg,#F7F3EA,#F0EBE0);color:var(--g500);padding:14px 16px;
+  border-bottom:1px solid rgba(201,162,39,.12);
+}
+td{padding:14px 16px;font-size:.875rem;border-bottom:1px solid rgba(232,226,212,.7)}
+tr:hover td{background:rgba(201,162,39,.05)}
+.av{box-shadow:0 2px 10px rgba(10,42,107,.2);border:2px solid rgba(201,162,39,.25)}
+.bal{font-weight:800;color:var(--ok);font-variant-numeric:tabular-nums;font-family:'Inter',sans-serif}
+.st{padding:4px 12px;border-radius:999px;font-size:.68rem;font-weight:700;letter-spacing:.04em}
+.st-a{background:var(--okb);color:var(--ok)}
+.st-f{background:var(--badb);color:var(--bad)}
+.st-r{background:#EDE9FE;color:#6D28D9}
+.st-p{background:var(--warnb);color:var(--warn)}
+.mail-layout{min-height:520px;border-radius:0 0 18px 18px}
+.mail-row{padding:14px 16px;border-left:3px solid transparent;transition:background .15s,border-color .15s}
+.mail-row:hover{background:rgba(201,162,39,.06);border-left-color:var(--gold)}
+.mail-row.unread{background:rgba(10,42,107,.04);border-left-color:var(--p)}
+.mail-row.selected{background:rgba(201,162,39,.1);border-left-color:var(--gold-d)}
+.mail-row .msubj{font-weight:700;font-size:.9rem;color:var(--ink)}
+.mail-acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.mail-acts .btn{pointer-events:auto}
+.chat-bubble.me{background:linear-gradient(135deg,#E8D48B,#D4AF37);color:#0A2A6B}
+.chat-bubble.them{background:#FFFEFB;border:1px solid var(--g200)}
+.chat-thread{background:linear-gradient(180deg,#EDE8DC,#E5DFD0)}
+.overlay{backdrop-filter:blur(10px) saturate(140%);background:rgba(7,13,28,.55)}
+.modal{
+  border-radius:20px;box-shadow:var(--shadow-lg),0 0 0 1px rgba(201,162,39,.2);
+  border:1px solid rgba(201,162,39,.25);background:linear-gradient(180deg,#FFFEFB,#FBF8F1);
+}
+.modal-h{
+  background:linear-gradient(180deg,#FFFEFB,#F5F0E6);
+  border-bottom:1px solid rgba(201,162,39,.18);
+}
+.modal-h h3{font-family:'Playfair Display',Georgia,serif;font-weight:700;color:var(--ink)}
+.toast{
+  border-radius:14px;box-shadow:var(--shadow-lg);font-weight:600;
+  border:1px solid rgba(201,162,39,.2);
+}
+.file-cust{border-radius:14px;box-shadow:var(--shadow);border:1px solid rgba(201,162,39,.14)}
+.file-cust.open .file-cust-h{background:linear-gradient(90deg,rgba(201,162,39,.12),rgba(10,42,107,.06));color:var(--p)}
+.wallet-row,.restrict-row{padding:16px 18px}
+.agent-tag{
+  display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;
+  padding:3px 10px;border-radius:8px;background:#EDE9FE;color:#6D28D9;
+}
+.route-tag{
+  display:inline-flex;align-items:center;gap:4px;font-size:.72rem;font-weight:700;
+  padding:3px 10px;border-radius:8px;background:var(--warnb);color:var(--warn);
+}
+.hint{color:var(--g500);letter-spacing:.03em}
+.empty{color:var(--g400)}
+/* Gold hairline under section titles in overview */
+#title{position:relative}
+/* Scrollbar luxury */
+.side::-webkit-scrollbar,.main::-webkit-scrollbar,table::-webkit-scrollbar{width:6px;height:6px}
+.side::-webkit-scrollbar-thumb{background:rgba(201,162,39,.35);border-radius:99px}
+@media(max-width:900px){
+  .side{width:72px}
+  .main{margin-left:72px;padding:0 16px 40px}
+  .side-h span,.nav a span:not(.badge),.side-f .an{display:none}
+  .nav a{justify-content:center;padding:12px}
+  .top h2{font-size:1.35rem}
+}
+
+</style>
+</head>
+<body>
+<div id="login-screen">
+  <div class="login-card">
+    <div class="logo"><i class="fas fa-crown"></i> CITY LEGACY BANK</div>
+    <h1>Master Admin</h1>
+    <p class="sub">Private banking command · authorized only</p>
+    <form id="login-form">
+      <div class="fg"><label>Username</label><input id="username" required autocomplete="username"/></div>
+      <div class="fg"><label>Password</label><input type="password" id="password" required autocomplete="current-password"/></div>
+      <button class="btn btn-p btn-block" type="submit"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+      <p class="hint">Authorized access only</p></form>
+  </div>
+</div>
+
+<div id="dashboard" class="hidden">
+  <aside class="side">
+    <div class="side-h"><i class="fas fa-crown"></i> <span>CITY LEGACY · PRIVATE</span></div>
+    <nav class="nav">
+      <a href="#" class="on" data-v="overview"><i class="fas fa-chart-pie"></i> <span>Overview</span></a>
+      <a href="#" data-v="customers"><i class="fas fa-users"></i> <span>Customers</span></a>
+      <a href="#" data-v="agents"><i class="fas fa-user-tie"></i> <span>Agents</span> <span class="badge hidden" id="b-ag">0</span></a>
+      <a href="#" data-v="authorized"><i class="fas fa-key"></i> <span>Authorized</span></a>
+      <a href="#" data-v="signups"><i class="fas fa-user-plus"></i> <span>Pending Signups</span> <span class="badge hidden" id="b-s">0</span></a>
+      <a href="#" data-v="kyc"><i class="fas fa-id-card"></i> <span>KYC Verification</span> <span class="badge hidden" id="b-kyc">0</span></a>
+      <a href="#" data-v="loans"><i class="fas fa-hand-holding-usd"></i> <span>Loan Applications</span> <span class="badge hidden" id="b-loan">0</span></a>
+      <a href="#" data-v="transfers"><i class="fas fa-exchange-alt"></i> <span>Pending Transfers</span> <span class="badge hidden" id="b-t">0</span></a>
+      <a href="#" data-v="transactions"><i class="fas fa-history"></i> <span>Transactions</span></a>
+      <a href="#" data-v="mail"><i class="fas fa-envelope"></i> <span>Mail</span> <span class="badge hidden" id="b-m">0</span></a>
+      <a href="#" data-v="changes"><i class="fas fa-user-shield"></i> <span>Pending Changes</span> <span class="badge hidden" id="b-ch">0</span></a>
+      <a href="#" data-v="chat"><i class="fas fa-comments"></i> <span>Chat</span> <span class="badge hidden" id="b-chat">0</span></a>
+      <a href="#" data-v="files"><i class="fas fa-folder-open"></i> <span>Files</span></a>
+      <a href="#" data-v="wallet"><i class="fas fa-wallet"></i> <span>Wallet Address Request</span> <span class="badge hidden" id="b-w">0</span></a>
+      <a href="#" data-v="invwallets"><i class="fas fa-chart-line"></i> <span>Investment Wallet ID</span> <span class="badge hidden" id="b-inv">0</span></a>
+      <a href="#" data-v="savwallets"><i class="fas fa-piggy-bank"></i> <span>Savings Wallet</span> <span class="badge hidden" id="b-sav">0</span></a>
+      <a href="#" data-v="restrictions"><i class="fas fa-ban"></i> <span>Restrictions / Frozen</span> <span class="badge hidden" id="b-r">0</span></a>
+      <a href="#" data-v="delete"><i class="fas fa-trash-alt"></i> <span>Delete</span></a>
+    </nav>
+    <div class="side-f">
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--p);display:flex;align-items:center;justify-content:center;font-weight:700">A</div>
+        <div class="an"><div style="font-weight:700;font-size:.9rem;letter-spacing:.02em">Master Admin</div><div style="font-size:.72rem;color:var(--gold);letter-spacing:.06em;text-transform:uppercase">Full access</div></div>
+      </div>
+      <button class="btn btn-g btn-sm btn-block" id="logout" style="color:var(--g400);border-color:#4b5563"><i class="fas fa-sign-out-alt"></i> Logout</button>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="top">
+      <h2 id="title">Overview</h2>
+      <div class="top-r">
+        <span class="sync" id="sync"><i class="fas fa-cloud"></i> …</span>
+        <button class="btn btn-g btn-sm" id="refresh"><i class="fas fa-sync-alt"></i></button>
+        <div class="search"><i class="fas fa-search"></i><input id="q" placeholder="Search…"/></div>
+      </div>
+    </div>
+
+    <section id="v-overview">
+      <div class="stats">
+        <div class="sc"><div class="si b"><i class="fas fa-users"></i></div><div><div class="sv" id="s-c">0</div><div class="sl">Customers</div></div></div>
+        <div class="sc"><div class="si g"><i class="fas fa-wallet"></i></div><div><div class="sv" id="s-b">$0</div><div class="sl">Total Funds</div></div></div>
+        <div class="sc"><div class="si o"><i class="fas fa-user-clock"></i></div><div><div class="sv" id="s-s">0</div><div class="sl">Pending Signups</div></div></div>
+        <div class="sc"><div class="si r"><i class="fas fa-paper-plane"></i></div><div><div class="sv" id="s-t">0</div><div class="sl">Pending Transfers</div></div></div>
+        <div class="sc"><div class="si o"><i class="fas fa-hand-holding-usd"></i></div><div><div class="sv" id="s-loan">0</div><div class="sl">Pending Loans</div></div></div>
+      </div>
+      <div class="stats" style="margin-top:-8px">
+        <div class="sc"><div class="si b"><i class="fas fa-user-tie"></i></div><div><div class="sv" id="s-ag">0</div><div class="sl">Agents</div></div></div>
+        <div class="sc"><div class="si g"><i class="fas fa-coins"></i></div><div><div class="sv" id="s-agb">$0</div><div class="sl">Agent Funds</div></div></div>
+        <div class="sc"><div class="si o"><i class="fas fa-users-cog"></i></div><div><div class="sv" id="s-agc">0</div><div class="sl">Agent-created Customers</div></div></div>
+        <div class="sc"><div class="si r"><i class="fas fa-ban"></i></div><div><div class="sv" id="s-ags">0</div><div class="sl">Suspended Agents</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-h" style="cursor:pointer;user-select:none" id="recent-toggle" onclick="toggleRecent()">
+          <h3><i class="fas fa-history"></i> Recent Activity</h3>
+          <button type="button" class="btn btn-g btn-sm" id="recent-chevron"><i class="fas fa-chevron-down"></i> Show</button>
+        </div>
+        <div id="recent-wrap" class="hidden"><div id="recent"></div></div>
+      </div>
+    </section>
+
+    <section id="v-customers" class="hidden">
+      <div class="card">
+        <div class="card-h"><h3>Customers</h3>
+          <button type="button" class="btn btn-g btn-sm" onclick="adminRandomizeJoinDates()" title="Random join dates 2024–2025"><i class="fas fa-calendar"></i> Randomize join dates</button><button class="btn btn-p btn-sm" id="btn-add"><i class="fas fa-user-plus"></i> Create</button></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Account</th><th>Customer</th><th>Email</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody id="tb-c"></tbody></table></div>
+      </div>
+    </section>
+
+
+    <section id="v-agents" class="hidden">
+      <div class="card">
+        <div class="card-h"><h3>Agents</h3><button class="btn btn-p btn-sm" id="btn-add-agent"><i class="fas fa-user-tie"></i> Create Agent</button></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Agent</th><th>Username</th><th>Balance</th><th>Customers</th><th>Limit</th><th>Status</th><th></th></tr></thead><tbody id="tb-ag"></tbody></table></div>
+      </div>
+    </section>
+
+    
+    <section id="v-authorized" class="hidden">
+      <div class="card">
+        <div class="card-h">
+          <h3><i class="fas fa-key"></i> Agent Authorization</h3>
+          <span style="font-size:.8rem;color:var(--g500)">Grant features per agent · only authorized actions reach the agent dashboard</span>
+        </div>
+        <div style="padding:16px 20px">
+          <p style="font-size:.9rem;color:var(--g600);margin-bottom:14px">Select an agent, enable the features they may use, then save. Customers under that agent will route mail, chat, and approval requests to the agent only when those features are authorized.</p>
+          <div class="fg" style="max-width:420px">
+            <label>Agent</label>
+            <select id="auth-agent-sel"><option value="">Select agent…</option></select>
+          </div>
+          <div id="auth-panel" class="hidden" style="margin-top:16px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" id="auth-checks">
+              <label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--g200);border-radius:10px;cursor:pointer">
+                <input type="checkbox" id="perm-createCustomers" style="margin-top:3px"/>
+                <span><strong>Create customers</strong><br><span style="font-size:.8rem;color:var(--g500)">Agent can open accounts under their limit</span></span>
+              </label>
+              <label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--g200);border-radius:10px;cursor:pointer">
+                <input type="checkbox" id="perm-fundCustomers" style="margin-top:3px"/>
+                <span><strong>Fund customers</strong><br><span style="font-size:.8rem;color:var(--g500)">Move float to their portfolio customers</span></span>
+              </label>
+              <label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--g200);border-radius:10px;cursor:pointer">
+                <input type="checkbox" id="perm-receiveMail" style="margin-top:3px"/>
+                <span><strong>Receive mail</strong><br><span style="font-size:.8rem;color:var(--g500)">Customer support mail goes to this agent</span></span>
+              </label>
+              <label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--g200);border-radius:10px;cursor:pointer">
+                <input type="checkbox" id="perm-receiveChat" style="margin-top:3px"/>
+                <span><strong>Receive chat</strong><br><span style="font-size:.8rem;color:var(--g500)">Live chat from their customers</span></span>
+              </label>
+              <label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--g200);border-radius:10px;cursor:pointer">
+                <input type="checkbox" id="perm-approveTransfers" style="margin-top:3px"/>
+                <span><strong>Approve transfers</strong><br><span style="font-size:.8rem;color:var(--g500)">Transfer requests from portfolio need agent approval</span></span>
+              </label>
+              <label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--g200);border-radius:10px;cursor:pointer">
+                <input type="checkbox" id="perm-approveChanges" style="margin-top:3px"/>
+                <span><strong>Approve account changes</strong><br><span style="font-size:.8rem;color:var(--g500)">PIN / credential change requests</span></span>
+              </label>
+              <label style="display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--g200);border-radius:10px;cursor:pointer">
+                <input type="checkbox" id="perm-freezeCustomers" style="margin-top:3px"/>
+                <span><strong>Freeze / restrict</strong><br><span style="font-size:.8rem;color:var(--g500)">Limited freeze or restrict on their customers</span></span>
+              </label>
+            </div>
+            <div class="fa" style="justify-content:flex-start;margin-top:16px">
+              <button type="button" class="btn btn-p" id="auth-save"><i class="fas fa-save"></i> Save authorization</button>
+            </div>
+            <p id="auth-hint" style="font-size:.85rem;color:var(--g500);margin-top:10px"></p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Authorization overview</h3></div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Agent</th><th>Create</th><th>Fund</th><th>Mail</th><th>Chat</th><th>Transfers</th><th>Changes</th><th>Freeze</th></tr></thead>
+            <tbody id="tb-auth"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+<section id="v-signups" class="hidden">
+      <div class="card pending">
+        <div class="card-h"><h3>Pending Sign-ups</h3></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>When</th><th>Name</th><th>Email</th><th>Phone</th><th>Username</th><th></th></tr></thead><tbody id="tb-s"></tbody></table></div>
+      </div>
+    </section>
+
+    
+    <section id="v-kyc" class="hidden">
+      <div class="card">
+        <div class="card-h">
+          <h3>KYC verification queue</h3>
+          <div class="acts">
+            <button type="button" class="btn btn-g btn-sm" onclick="renderKyc()">Refresh</button>
+          </div>
+        </div>
+        <div style="padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-sm btn-p" id="kycTabPending" onclick="kycTab('pending')">Pending</button>
+          <button type="button" class="btn btn-sm btn-g" id="kycTabAll" onclick="kycTab('all')">All</button>
+          <button type="button" class="btn btn-sm btn-g" id="kycTabVerified" onclick="kycTab('verified')">Verified</button>
+          <button type="button" class="btn btn-sm btn-g" id="kycTabRejected" onclick="kycTab('rejected')">Rejected</button>
+        </div>
+        <div id="kycList" style="padding:0 20px 20px"><div class="empty">Loading…</div></div>
+      </div>
+    </section>
+
+    <section id="v-loans" class="hidden">
+      <div class="card pending">
+        <div class="card-h">
+          <h3><i class="fas fa-hand-holding-usd"></i> Loan Applications</h3>
+          <span style="font-size:.8rem;color:var(--g500)">Approve or decline · funds only after approval</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Applicant</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Income</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tb-loans"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card pending" style="margin-top:16px">
+        <div class="card-h">
+          <h3><i class="fas fa-university"></i> Loan transfer requests</h3>
+          <span style="font-size:.8rem;color:var(--g500)">Settle pending disbursements to customer accounts</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>When</th><th>Applicant</th><th>Account</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+            <tbody id="tb-loan-xfer"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-h"><h3>All loan applications (history)</h3></div>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>When</th>
+                <th>Applicant</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Account</th>
+              </tr>
+            </thead>
+            <tbody id="tb-loans-hist"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+<section id="v-transfers" class="hidden">
+      <div class="card pending">
+        <div class="card-h"><h3>Pending Transfers</h3></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>When</th><th>From</th><th>To</th><th>Amount</th><th>Note</th><th></th></tr></thead><tbody id="tb-t"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="v-transactions" class="hidden">
+      <div class="card">
+        <div class="card-h"><h3>Transactions</h3>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <select id="txf"><option value="all">All</option><option value="credit">Credits</option><option value="debit">Debits</option><option value="transfer">Transfers</option></select>
+            <button type="button" class="btn btn-g btn-sm" onclick="(function(){var a=prompt('Account number to randomize transaction dates (e.g. ACC-244229):','ACC-244229'); if(a) adminRandomizeTxnByAccount(a);})()"><i class="fas fa-calendar-alt"></i> Randomize dates by account</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto"><table><thead><tr><th>Date</th><th>Account</th><th>Customer</th><th>Type</th><th>Amount</th><th>After</th><th>Note</th><th>Actions</th></tr></thead><tbody id="tb-x"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="v-mail" class="hidden">
+      <div class="card">
+        <div class="card-h">
+          <div>
+            <h3><i class="fas fa-envelope"></i> Mail — Customer Support</h3>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+              <button type="button" class="btn btn-g btn-sm" onclick="deleteAllMail('unread')" title="Delete all unread"><i class="fas fa-envelope"></i> Delete unread</button>
+              <button type="button" class="btn btn-g btn-sm" onclick="deleteAllMail('read')" title="Delete all read"><i class="fas fa-envelope-open"></i> Delete read</button>
+              <button type="button" class="btn btn-bad btn-sm" onclick="deleteAllMail('all')" title="Delete all mail"><i class="fas fa-trash"></i> Delete all</button>
+            </div>
+          </div>
+          <div class="mail-tabs">
+            <button type="button" class="on" id="mailTabInbox" onclick="mailTab('inbox')">Inbox</button>
+            <button type="button" id="mailTabSent" onclick="mailTab('sent')">Sent</button>
+            <button type="button" id="mailTabCompose" onclick="mailTab('compose')">Compose</button>
+          </div>
+        </div>
+        <div id="mailInboxView">
+          <div class="mail-layout">
+            <div class="mail-list" id="mailList"></div>
+            <div class="mail-read" id="mailRead">
+              <div class="empty"><i class="fas fa-envelope-open" style="font-size:2rem;display:block;margin-bottom:8px"></i>Select a message</div>
+            </div>
+          </div>
+        </div>
+        <div id="mailComposeView" class="hidden">
+          <div class="mail-compose">
+            <div class="fg"><label>To customer</label>
+              <select id="mailToCust"><option value="">Select customer…</option></select>
+            </div>
+            <div class="fg"><label>Subject</label><input id="mailSubj" placeholder="Subject"/></div>
+            <div class="fg"><label>Message</label><textarea id="mailBody" placeholder="Write your message…"></textarea></div>
+            <div class="fa">
+              <button type="button" class="btn btn-g" onclick="mailTab('inbox')">Cancel</button>
+              <button type="button" class="btn btn-p" onclick="sendAdminMail()"><i class="fas fa-paper-plane"></i> Send</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-changes" class="hidden">
+      <div class="card pending">
+        <div class="card-h"><h3>Pending Credential &amp; PIN Changes</h3></div>
+        <div style="overflow-x:auto"><table><thead><tr><th>When</th><th>Customer</th><th>Type</th><th>Details</th><th></th></tr></thead><tbody id="tb-ch"></tbody></table></div>
+      </div>
+    </section>
+
+    <section id="v-delete" class="hidden">
+      <div class="card" style="border-left:4px solid var(--bad)">
+        <div class="card-h">
+          <h3><i class="fas fa-trash-alt" style="color:var(--bad)"></i> Delete Records</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn btn-g btn-sm on" id="delTabChoice" onclick="deleteTab('choice')"><i class="fas fa-list"></i> Choose</button>
+            <button type="button" class="btn btn-g btn-sm" id="delTabAgents" onclick="deleteTab('agents')"><i class="fas fa-user-tie"></i> Agents</button>
+            <button type="button" class="btn btn-g btn-sm" id="delTabCustomers" onclick="deleteTab('customers')"><i class="fas fa-users"></i> Customers</button>
+          </div>
+        </div>
+        <div id="del-choice" style="padding:28px 20px">
+          <p style="text-align:center;color:var(--g500);margin-bottom:20px;font-size:.95rem">Select what you want to permanently delete. This cannot be undone.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:520px;margin:0 auto">
+            <button type="button" class="btn btn-bad" style="padding:22px 16px;flex-direction:column;gap:10px;height:auto" onclick="deleteTab('agents')">
+              <i class="fas fa-user-tie" style="font-size:1.6rem"></i>
+              <span style="font-size:1rem">Delete Agents</span>
+              <span style="font-size:.78rem;opacity:.9;font-weight:500">Remove agent accounts — their portal login becomes invalid</span>
+            </button>
+            <button type="button" class="btn btn-bad" style="padding:22px 16px;flex-direction:column;gap:10px;height:auto" onclick="deleteTab('customers')">
+              <i class="fas fa-users" style="font-size:1.6rem"></i>
+              <span style="font-size:1rem">Delete Customers</span>
+              <span style="font-size:.78rem;opacity:.9;font-weight:500">Permanently remove customer accounts from the portal</span>
+            </button>
+          </div>
+        </div>
+        <div id="del-agents" class="hidden">
+          <div style="padding:12px 20px;background:var(--badb);color:var(--bad);font-size:.85rem;font-weight:600">
+            <i class="fas fa-exclamation-triangle"></i> Clicking <strong>Delete</strong> permanently removes that agent. Their login will no longer work. Customers they created stay under Master Admin.
+          </div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Agent</th><th>Username</th><th>Balance</th><th>Customers</th><th>Status</th><th></th></tr></thead><tbody id="tb-del-ag"></tbody></table></div>
+        </div>
+        <div id="del-customers" class="hidden">
+          <div style="padding:12px 20px;background:var(--badb);color:var(--bad);font-size:.85rem;font-weight:600">
+            <i class="fas fa-exclamation-triangle"></i> Clicking <strong>Delete</strong> permanently removes that customer account and related pending items. This cannot be undone.
+          </div>
+          <div style="padding:10px 20px">
+            <div class="search" style="width:100%;max-width:320px"><i class="fas fa-search"></i><input id="del-q" placeholder="Search customers…" oninput="renderDeleteCustomers()"/></div>
+          </div>
+          <div style="overflow-x:auto"><table><thead><tr><th>Account</th><th>Customer</th><th>Email</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody id="tb-del-c"></tbody></table></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-chat" class="hidden">
+      <div class="card" style="overflow:hidden;padding:0">
+        <div class="card-h" style="margin:0;border-radius:0">
+          <h3><i class="fas fa-comments"></i> Live Chat</h3>
+          <span style="font-size:.8rem;color:var(--g500)">WhatsApp-style · replies sync to customer</span>
+        </div>
+        <div class="chat-layout">
+          <div class="chat-list" id="chatList">
+            <div class="empty">No conversations yet</div>
+          </div>
+          <div class="chat-thread" id="chatThread">
+            <div class="chat-thread-h" id="chatThreadH">
+              <div class="empty" style="padding:0;width:100%">Select a customer to chat</div>
+            </div>
+            <div class="chat-msgs" id="chatMsgs"></div>
+            <div class="chat-compose hidden" id="chatCompose">
+              <textarea id="chatInput" placeholder="Type a message…" rows="1"></textarea>
+              <button type="button" class="btn btn-p" id="chatSend" title="Send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-files" class="hidden">
+      <div class="card">
+        <div class="card-h">
+          <h3><i class="fas fa-folder-open"></i> Customer Files</h3>
+          <div class="search" style="width:220px"><i class="fas fa-search"></i><input id="files-q" placeholder="Search customer…" oninput="renderFiles()"/></div>
+        </div>
+        <div style="padding:16px 20px" id="filesList">
+          <div class="empty">No customers</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-wallet" class="hidden">
+      <div class="card pending">
+        <div class="card-h">
+          <h3><i class="fas fa-wallet"></i> Crypto Wallet Address Requests</h3>
+          <span style="font-size:.8rem;color:var(--g500)">Agent-owned customers route to their agent dashboard · Master can still reply</span>
+        </div>
+        <div id="walletList">
+          <div class="empty">No wallet address requests</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-invwallets" class="hidden">
+      <div class="card">
+        <div class="card-h">
+          <h3>Investment wallets</h3>
+          <div class="acts">
+            <button type="button" class="btn btn-g btn-sm" onclick="renderInvWallets()"><i class="fas fa-sync"></i> Refresh</button>
+          </div>
+        </div>
+        <div style="padding:16px 20px;border-bottom:1px solid var(--g200)">
+          <p style="font-size:.88rem;color:var(--g600);margin:0 0 12px">Customers with investment wallets. Fund, restrict, or lock cash. CLB ETF &amp; MTG-CLB price engines are controlled below.</p>
+          <div id="invWalletList"><div class="empty">Loading…</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-h"><h3>Admin stocks — CLB ETF &amp; MTG-CLB</h3></div>
+        <div style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px" id="invStockEngines">
+          <div style="border:1px solid var(--g200);border-radius:12px;padding:16px" data-sym="CLB">
+            <h4 style="margin:0 0 8px;color:var(--p)">City Legacy ETF (CLB)</h4>
+            <div class="fg"><label>Mode</label>
+              <select id="invEng-CLB-mode">
+                <option value="pause">Pause</option>
+                <option value="interest">+ Interest</option>
+                <option value="loss">− Loss</option>
+              </select>
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Rate % per tick</label><input id="invEng-CLB-rate" type="number" step="0.01" min="0" placeholder="e.g. 0.4"/></div>
+              <div class="fg"><label>Interval</label>
+                <select id="invEng-CLB-interval">
+                  <option value="500">0.5 sec</option>
+                  <option value="10000">10 sec</option>
+                  <option value="20000">20 sec</option>
+                  <option value="60000">1 min</option>
+                  <option value="300000">5 min</option>
+                  <option value="480000" selected>8 min</option>
+                  <option value="900000">15 min</option>
+                  <option value="3600000">1 hr</option>
+                  <option value="86400000">24 hr</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" class="btn btn-p btn-sm" onclick="saveInvEngine('CLB')"><i class="fas fa-save"></i> Apply CLB engine</button>
+            <div id="invEng-CLB-status" style="font-size:.8rem;color:var(--g500);margin-top:8px"></div>
+          </div>
+          <div style="border:1px solid var(--g200);border-radius:12px;padding:16px" data-sym="MTG-CLB">
+            <h4 style="margin:0 0 8px;color:var(--p)">MTG-CLB</h4>
+            <div class="fg"><label>Mode</label>
+              <select id="invEng-MTG-CLB-mode">
+                <option value="pause">Pause</option>
+                <option value="interest">+ Interest</option>
+                <option value="loss">− Loss</option>
+              </select>
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Rate % per tick</label><input id="invEng-MTG-CLB-rate" type="number" step="0.01" min="0" placeholder="e.g. 0.4"/></div>
+              <div class="fg"><label>Interval</label>
+                <select id="invEng-MTG-CLB-interval">
+                  <option value="500">0.5 sec</option>
+                  <option value="10000">10 sec</option>
+                  <option value="20000">20 sec</option>
+                  <option value="60000">1 min</option>
+                  <option value="300000">5 min</option>
+                  <option value="480000" selected>8 min</option>
+                  <option value="900000">15 min</option>
+                  <option value="3600000">1 hr</option>
+                  <option value="86400000">24 hr</option>
+                </select>
+              </div>
+            </div>
+            <button type="button" class="btn btn-p btn-sm" onclick="saveInvEngine('MTG-CLB')"><i class="fas fa-save"></i> Apply MTG-CLB engine</button>
+            <div id="invEng-MTG-CLB-status" style="font-size:.8rem;color:var(--g500);margin-top:8px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-savwallets" class="hidden">
+      <div class="card">
+        <div class="card-h">
+          <h3>Savings wallets</h3>
+          <button type="button" class="btn btn-g btn-sm" onclick="renderSavWallets()"><i class="fas fa-sync"></i> Refresh</button>
+        </div>
+        <div style="padding:16px 20px">
+          <p style="font-size:.88rem;color:var(--g600);margin:0 0 12px">Fund or deduct customer savings. Unlock locked term deposits so customers can withdraw.</p>
+          <div id="savWalletList"><div class="empty">Loading…</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v-restrictions" class="hidden">
+      <div class="card" style="border-left:4px solid var(--bad)">
+        <div class="card-h">
+          <h3><i class="fas fa-ban"></i> Restrictions / Frozen / Suspended</h3>
+          <div style="display:flex;gap:8px">
+            <button type="button" class="btn btn-g btn-sm on" id="restTabAll" onclick="restrictTab('all')">All</button>
+            <button type="button" class="btn btn-g btn-sm" id="restTabCust" onclick="restrictTab('customers')">Customers</button>
+            <button type="button" class="btn btn-g btn-sm" id="restTabAg" onclick="restrictTab('agents')">Agents</button>
+          </div>
+        </div>
+        <div id="restrictList">
+          <div class="empty">No restricted accounts</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="modal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-h"><h3>Customer Profile</h3><button class="x" id="mx">&times;</button></div>
+    <div class="modal-b">
+      <div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">
+        <div id="p-av" style="width:56px;height:56px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem"></div>
+        <div style="flex:1;min-width:0">
+          <div class="fg" style="margin-bottom:6px"><label style="font-size:.7rem;text-transform:uppercase;color:var(--g400);font-weight:600">Full name</label>
+            <input id="p-name" style="font-size:1.05rem;font-weight:700;padding:8px 10px"/>
+          </div>
+          <p id="p-acc" style="color:var(--g500);font-size:.9rem;margin:0"></p>
+        </div>
+      </div>
+      <div class="pg">
+        <div class="pi"><label>Email</label><input id="p-em" type="email" style="padding:8px 10px;font-size:.9rem"/></div>
+        <div class="pi"><label>Phone</label><input id="p-ph" style="padding:8px 10px;font-size:.9rem"/></div>
+        <div class="pi"><label>Routing Number</label><span id="p-route" style="font-family:monospace;font-weight:700"></span></div>
+        <div class="pi"><label>Username</label><span id="p-user"></span></div>
+        <div class="pi"><label>Password</label><span id="p-pass" style="font-family:monospace"></span>
+          <button class="btn btn-g btn-sm" id="p-eye" style="margin-left:6px;padding:4px 8px"><i class="fas fa-eye"></i></button>
+          <button class="btn btn-g btn-sm" id="p-regen" style="padding:4px 8px"><i class="fas fa-sync"></i></button>
+        </div>
+        <div class="pi"><label>Balance</label><span id="p-bal" class="bal" style="font-size:1.2rem"></span></div>
+        <div class="pi"><label>Status</label><span id="p-st" class="st"></span></div>
+        <div class="pi"><label>Account opened / Joined</label>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+            <input type="date" id="p-joined" min="2024-03-21" max="2025-12-29" style="padding:8px 10px;font-size:.9rem"/>
+            <button type="button" class="btn btn-g btn-sm" onclick="if(S.cur)adminRandomizeOneJoin(S.cur)" title="Random date Mar 21 2024 – Dec 29 2025"><i class="fas fa-dice"></i> Randomize</button>
+          </div>
+        </div>
+      </div>
+      <div class="fa" style="justify-content:flex-start;margin-top:8px;margin-bottom:4px">
+        <button type="button" class="btn btn-p btn-sm" id="btn-save-profile"><i class="fas fa-save"></i> Save profile</button>
+      </div>
+      <div class="hr"></div>
+      <h4 style="margin-bottom:10px"><i class="fas fa-coins"></i> Adjust Funds</h4>
+      <form id="adj-form">
+        <div class="fr">
+          <div class="fg"><label>Action</label><select id="adj-type"><option value="credit">Credit (+)</option><option value="debit">Debit (−)</option></select></div>
+          <div class="fg"><label>Amount</label><input type="number" id="adj-amt" min="0.01" step="0.01" required/></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Transaction date</label><input type="datetime-local" id="adj-date"/></div>
+          <div class="fg"><label>Note / reason</label><input id="adj-note" placeholder="e.g. Initial funding, salary credit…"/></div>
+        </div>
+        <div class="fg"><label>Sender / From (shown on customer history)</label>
+          <input id="adj-from" placeholder="e.g. Employer payroll, Wire from John Smith, City Legacy Bank"/>
+          <p style="font-size:.75rem;color:var(--g500);margin:4px 0 0">For credits, this becomes “Transfer from [name]” on the customer’s statement. Leave blank to use the note only.</p>
+        </div>
+        <div class="fa">
+          <button type="button" class="btn btn-g" id="m-close">Close</button>
+          <button type="submit" class="btn btn-p">Confirm</button>
+        </div>
+      </form>
+      <div class="hr"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        <h4 style="margin:0"><i class="fas fa-history"></i> Transaction history <span style="font-size:.75rem;font-weight:500;color:var(--g500)">· edit Date on any row</span></h4>
+        <button type="button" class="btn btn-g btn-sm" onclick="if(S.cur)adminRandomizeTxnHistory(S.cur)" title="Randomize all this customer transaction dates Mar 21 2024 – Dec 29 2025">
+          <i class="fas fa-calendar-alt"></i> Randomize dates
+        </button>
+      </div>
+      <div id="p-history" style="max-height:320px;overflow:auto;font-size:.85rem"></div>
+      <div class="hr"></div>
+      <div class="hr"></div>
+      <h4 style="margin-bottom:10px"><i class="fas fa-user-tie"></i> Agent assignment</h4>
+      <p style="font-size:.82rem;color:var(--g500);margin-bottom:8px">Assigned to: <strong id="p-agent">Master</strong></p>
+      <div class="fr">
+        <div class="fg"><label>Move to agent / master</label>
+          <select id="p-assign-agent"><option value="master">Master Admin (unassigned)</option></select>
+        </div>
+        <div class="fg" style="display:flex;align-items:flex-end">
+          <button type="button" class="btn btn-p btn-sm" id="btn-assign-agent" style="width:100%"><i class="fas fa-exchange-alt"></i> Reassign</button>
+        </div>
+      </div>
+      <div class="hr"></div>
+      <div class="acts">
+        <button class="btn btn-warn btn-sm" id="btn-freeze"><i class="fas fa-ban"></i> Freeze / Unfreeze</button>
+        <button class="btn btn-g btn-sm" id="btn-restrict"><i class="fas fa-lock"></i> Restrict / Unrestrict</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="add-modal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-h"><h3>Create Profile</h3><button class="x" id="ax">&times;</button></div>
+    <div class="modal-b">
+      <form id="add-form">
+        <div class="fr">
+          <div class="fg"><label>Full Name *</label><input id="n-name" required/></div>
+          <div class="fg"><label>Email *</label><input type="email" id="n-email" required/></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Phone</label><input id="n-phone"/></div>
+          <div class="fg"><label>Initial Funding ($)</label><input type="number" id="n-bal" min="0" step="0.01" value="0"/></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Funding date</label><input type="datetime-local" id="n-date"/></div>
+          <div class="fg"><label>Funding note / reason</label><input id="n-note" placeholder="e.g. Initial account funding"/></div>
+        </div>
+        <div class="fg"><label>Address</label><input id="n-addr"/></div>
+        <div class="fg"><label>Assign to agent (optional)</label>
+          <select id="n-agent"><option value="master">Master Admin (keep under master)</option></select>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Username *</label><input id="n-user" required/></div>
+          <div class="fg"><label>Password *</label><input id="n-pass" required/></div>
+        </div>
+        <p style="font-size:.8rem;color:var(--g500);margin:0 0 8px">Account number and routing number are generated automatically.</p>
+        <div class="fa">
+          <button type="button" class="btn btn-g" id="a-cancel">Cancel</button>
+          <button type="submit" class="btn btn-p">Create & Fund</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div id="agent-modal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-h"><h3>Create Agent</h3><button class="x" id="agx">&times;</button></div>
+    <div class="modal-b">
+      <form id="agent-form">
+        <div class="fr">
+          <div class="fg"><label>Full Name *</label><input id="ag-name" required/></div>
+          <div class="fg"><label>Email *</label><input type="email" id="ag-email" required/></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Phone</label><input id="ag-phone"/></div>
+          <div class="fg"><label>Customer limit *</label><input type="number" id="ag-limit" min="1" max="500" value="3" required/></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Initial agent funds ($)</label><input type="number" id="ag-bal" min="0" step="0.01" value="0"/></div>
+          <div class="fg"><label>Funding note</label><input id="ag-note" placeholder="e.g. Starting float"/></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Username *</label><input id="ag-user" required/></div>
+          <div class="fg"><label>Password *</label><input id="ag-pass" required/></div>
+        </div>
+        <p style="font-size:.82rem;color:var(--g500);margin:8px 0 0">Agents log in from the website header → Agent. They can create up to the customer limit and fund only their own customers from their agent balance.</p>
+        <div class="fa">
+          <button type="button" class="btn btn-g" id="ag-cancel">Cancel</button>
+          <button type="submit" class="btn btn-p">Create Agent</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="agent-profile-modal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-h"><h3>Agent Profile</h3><button class="x" id="agpx">&times;</button></div>
+    <div class="modal-b">
+      <div style="display:flex;gap:14px;align-items:center;margin-bottom:12px">
+        <div id="ap-av" style="width:56px;height:56px;border-radius:50%;background:#6d28d9;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.2rem"></div>
+        <div><h2 id="ap-name" style="font-size:1.2rem"></h2><p id="ap-user" style="color:var(--g500);font-size:.9rem"></p></div>
+      </div>
+      <div class="pg">
+        <div class="pi"><label>Email</label><span id="ap-em"></span></div>
+        <div class="pi"><label>Phone</label><span id="ap-ph"></span></div>
+        <div class="pi"><label>Balance</label><span id="ap-bal" class="bal" style="font-size:1.2rem"></span></div>
+        <div class="pi"><label>Status</label><span id="ap-st" class="st"></span></div>
+        <div class="pi"><label>Customers</label><span id="ap-cust"></span></div>
+        <div class="pi"><label>Customer limit</label><span id="ap-lim"></span></div>
+      </div>
+      <div class="hr"></div>
+      <h4 style="margin-bottom:10px"><i class="fas fa-coins"></i> Fund Agent / Adjust Limit</h4>
+      <form id="ag-adj-form">
+        <div class="fr">
+          <div class="fg"><label>Action</label><select id="ag-adj-type"><option value="credit">Credit agent (+)</option><option value="debit">Debit agent (−)</option></select></div>
+          <div class="fg"><label>Amount</label><input type="number" id="ag-adj-amt" min="0.01" step="0.01"/></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>Set customer limit</label><input type="number" id="ag-adj-limit" min="1" max="500"/></div>
+          <div class="fg"><label>Note</label><input id="ag-adj-note" placeholder="Optional note"/></div>
+        </div>
+        <div class="fa">
+          <button type="button" class="btn btn-g" id="ap-close">Close</button>
+          <button type="submit" class="btn btn-p">Apply</button>
+        </div>
+      </form>
+      <div class="hr"></div>
+      <div class="acts">
+        <button class="btn btn-warn btn-sm" id="btn-ag-suspend"><i class="fas fa-ban"></i> Suspend / Unsuspend</button>
+        <button class="btn btn-g btn-sm" id="btn-ag-restrict"><i class="fas fa-lock"></i> Restrict / Unrestrict</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+const BIN_ID='6a7f1688da38895dfee49120';
+const MASTER_KEY='$2a$10$GYQxLL1XXB8n2AXo1tBan.EUKVKBdug7t2lYt7W7APyCPafTrZzTq';
+const ACCESS_KEY='$2a$10$V7Lthft9tZLpM5UE7XVPM.CnL6qZSVOaCRJXVlU78JbxQVIQm6y/S';
+const BIN_URL='https://api.jsonbin.io/v3/b/'+BIN_ID;
+const ADMIN_USER='admin', ADMIN_PASS='admin123';
+
+let S={customers:[],agents:[],pendingSignups:[],pendingTransfers:[],transactions:[],messages:[],pendingChanges:[],cur:null,curAgent:null,view:'overview',passVis:false,saving:false,mailSel:null,recentOpen:false};
+window.S=S;
+
+const $=id=>document.getElementById(id);
+const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(n||0);
+const fmt=iso=>iso?new Date(iso).toLocaleString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+const ini=n=>(n||'?').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const gid=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const gacc=()=>'ACC-'+(100000+Math.floor(Math.random()*900000));
+const groute=()=>{let d='';for(let i=0;i<8;i++)d+=Math.floor(Math.random()*10);const sum=[3,7,1,3,7,1,3,7].reduce((s,w,i)=>s+w*parseInt(d[i],10),0);const c=((10-(sum%10))%10);return d+c;};
+const AGENT_PALETTE=['#7c3aed','#db2777','#ea580c','#0891b2','#059669','#4f46e5','#c026d3','#d97706','#0d9488','#e11d48','#2563eb','#65a30d','#9333ea','#dc2626','#0284c8','#ca8a04'];
+function agentColor(id){if(!id||id==='master')return'#1a56db';const a=(S.agents||[]).find(x=>x.id===id);if(a&&a.color)return a.color;let h=0;const s=String(id);for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i)|0;return AGENT_PALETTE[Math.abs(h)%AGENT_PALETTE.length];}
+function agentColorStyle(id){const col=agentColor(id);return'border-left:4px solid '+col+';background:linear-gradient(90deg,'+col+'22,transparent 55%)';}
+
+const gpwd=(l=10)=>{const U='ABCDEFGHJKLMNPQRSTUVWXYZ',L='abcdefghjkmnpqrstuvwxyz',D='23456789',Sy='!@#$%&*';let p=U[Math.random()*U.length|0]+L[Math.random()*L.length|0]+D[Math.random()*D.length|0]+Sy[Math.random()*Sy.length|0];const a=U+L+D+Sy;while(p.length<l)p+=a[Math.random()*a.length|0];return p.split('').sort(()=>Math.random()-.5).join('')};
+const guser=n=>{const p=(n||'user').trim().toLowerCase().split(/\s+/);return p.length>=2?p[0]+'.'+p[p.length-1]:p[0]+(Math.random()*900+100|0)};
+
+function toISOLocal(dtVal){
+  if(!dtVal) return new Date().toISOString();
+  const d=new Date(dtVal);
+  return isNaN(d.getTime())?new Date().toISOString():d.toISOString();
+}
+function nowLocalInput(){
+  const d=new Date();
+  d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+  return d.toISOString().slice(0,16);
+}
+
+function toast(m,t){const e=$('toast');e.textContent=m;e.className='toast '+(t==='error'?'err':'ok');e.classList.remove('hidden');setTimeout(()=>e.classList.add('hidden'),3200)}
+function sync(ok,txt){const e=$('sync');e.className='sync '+(ok===true?'ok':ok===false?'err':'');e.innerHTML='<i class="fas fa-'+(ok===true?'cloud':ok===false?'exclamation-triangle':'spinner fa-spin')+'"></i> '+txt}
+
+async function loadBin(){
+  sync(null,'Loading…');
+  try{
+    const r=await fetch(BIN_URL+'/latest',{headers:{'X-Master-Key':MASTER_KEY,'X-Access-Key':ACCESS_KEY}});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();const d=j.record||j;
+    S.customers=d.customers||[];S.agents=d.agents||[];S.pendingSignups=d.pendingSignups||[];
+    (S.agents||[]).forEach(a=>{ if(!a.referralId){ a.referralId='CLB-'+Math.random().toString(36).slice(2,8).toUpperCase(); } });S.pendingTransfers=d.pendingTransfers||[];S.transactions=d.transactions||[];S.messages=d.messages||[];S.pendingChanges=d.pendingChanges||[];S.chats=d.chats||[];S.walletRequests=d.walletRequests||[];S.loanApplications=d.loanApplications||[];S.pendingLoanTransfers=d.pendingLoanTransfers||[];S.auditLog=d.auditLog||[];S.investmentConfig=d.investmentConfig||{CLB:{mode:'pause',ratePercent:0,intervalMs:480000,lastTick:null},'MTG-CLB':{mode:'pause',ratePercent:0,intervalMs:480000,lastTick:null}};
+    // Merge crypto wallet requests from customer portal into wallet list (dedupe by id)
+    (d.cryptoWalletRequests||[]).forEach(function(w){
+      if(!w||!w.id) return;
+      if(!(S.walletRequests||[]).some(function(x){return x.id===w.id;})) S.walletRequests.push(w);
+    });
+    // Route wallet requests from agent-owned customers to that agent
+    (S.walletRequests||[]).forEach(function(w){
+      if(!w) return;
+      const cust=(S.customers||[]).find(x=>x.id===w.customerId || x.accountNumber===w.accountNumber);
+      if(cust && cust.createdBy && cust.createdBy!=='master'){
+        w.agentId = cust.createdBy;
+        w.assignedAgentId = cust.createdBy;
+        const ag=(S.agents||[]).find(a=>a.id===cust.createdBy);
+        w.agentName = ag ? (ag.name||ag.username) : w.agentName;
+        w.routedToAgent = true;
+      } else if(!w.agentId){
+        w.routedToAgent = false;
+        w.assignedAgentId = null;
+      }
+    });
+    let needRouteSave=false;
+    S.customers.forEach(c=>{
+      if(!c.routingNumber){c.routingNumber=groute();needRouteSave=true;}
+      if(!c.txPin){c.txPin='2468';needRouteSave=true;}
+      if(!c.createdBy){c.createdBy='master';needRouteSave=true;}
+    });
+    S.agents.forEach((a,idx)=>{
+      if(a.customerLimit==null){a.customerLimit=3;needRouteSave=true;}
+      if(a.balance==null){a.balance=0;needRouteSave=true;}
+      if(!a.status){a.status='active';needRouteSave=true;}
+      if(!a.color){a.color=AGENT_PALETTE[idx%AGENT_PALETTE.length];needRouteSave=true;}
+    });
+
+    if(!S.customers.length){
+      const joined='2023-01-10T10:00:00.000Z';
+      S.customers=[{id:'c1',accountNumber:'ACC-102001',routingNumber:'021000021',name:'Douglas F',email:'douglas.f@email.com',phone:'+1 555 0707',address:'100 Legacy Plaza, New York',balance:5670081.00,status:'active',restriction:null,joined:'2023-01-10',username:'Deputy11',password:'202030',txPin:'2468',createdBy:'master'}];
+      S.pendingSignups=[];S.pendingTransfers=[];
+      S.transactions=[{id:'t0',customerId:'c1',accountNumber:'ACC-102001',customerName:'Douglas F',type:'credit',amount:5670081,balanceAfter:5670081,note:'Initial account funding',status:'completed',timestamp:joined}];
+      S.messages=[];
+      await saveBin();
+      toast('Seeded Douglas F account');
+    }
+    try{ const nj=typeof normalizeCustomerJoinDates==='function'?normalizeCustomerJoinDates(false):0; if(nj>0){ needRouteSave=true; } }catch(e){}
+    if(typeof needRouteSave!=='undefined'&&needRouteSave){try{await saveBin();}catch(e){}}
+    sync(true,'Synced');return true;
+  }catch(e){console.error(e);sync(false,'Failed');toast('Cloud load failed: '+e.message,'error');return false}
+}
+async function saveBin(){
+  if(S.saving)return false;S.saving=true;sync(null,'Saving…');
+  try{
+    const body={customers:S.customers,agents:S.agents||[],pendingSignups:S.pendingSignups,pendingTransfers:S.pendingTransfers,transactions:S.transactions,messages:S.messages,pendingChanges:S.pendingChanges||[],chats:S.chats||[],walletRequests:S.walletRequests||[],cryptoWalletRequests:S.walletRequests||[],loanApplications:S.loanApplications||[],pendingLoanTransfers:S.pendingLoanTransfers||[],auditLog:S.auditLog||[],investmentConfig:S.investmentConfig||{},meta:{bankName:'CITY LEGACY BANK',version:3,updatedAt:new Date().toISOString()}};
+    const r=await fetch(BIN_URL,{method:'PUT',headers:{'Content-Type':'application/json','X-Master-Key':MASTER_KEY},body:JSON.stringify(body)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    sync(true,'Synced');S.saving=false;return true;
+  }catch(e){console.error(e);sync(false,'Save failed');toast('Cloud save failed: '+e.message,'error');S.saving=false;return false}
+}
+
+function showDash(){$('login-screen').classList.add('hidden');$('dashboard').classList.remove('hidden');loadBin().then(render)}
+function showLogin(){$('dashboard').classList.add('hidden');$('login-screen').classList.remove('hidden')}
+
+$('login-form').onsubmit=async e=>{e.preventDefault();
+  if($('username').value.trim()===ADMIN_USER&&$('password').value===ADMIN_PASS){sessionStorage.setItem('clb_admin','1');showDash();toast('Welcome, Admin')}
+  else toast('Invalid credentials','error')};
+$('logout').onclick=()=>{sessionStorage.removeItem('clb_admin');showLogin()};
+$('refresh').onclick=async()=>{await loadBin();render();toast('Refreshed')};
+
+document.querySelectorAll('.nav a').forEach(a=>a.onclick=e=>{e.preventDefault();switchView(a.dataset.v)});
+function switchView(v){
+  S.view=v;
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+  ['overview','customers','agents','authorized','signups','kyc','loans','transfers','transactions','mail','changes','delete','chat','files','wallet','invwallets','savwallets','restrictions'].forEach(x=>{const el=$('v-'+x);if(el)el.classList.toggle('hidden',x!==v);});
+  $('title').textContent={overview:'Overview',customers:'Customers',agents:'Agents',authorized:'Agent Authorization',signups:'Pending Signups',kyc:'KYC Verification',loans:'Loan Applications',transfers:'Pending Transfers',transactions:'Transactions',mail:'Mail',changes:'Pending Changes',delete:'Delete',chat:'Live Chat',files:'Customer Files',wallet:'Wallet Address Requests',restrictions:'Restrictions / Frozen',invwallets:'Investment Wallet ID',savwallets:'Savings Wallet'}[v]||v;
+  if(v==='delete'){S.deleteSub=S.deleteSub||'choice';deleteTab(S.deleteSub);}
+  if(v==='loans') renderLoans();
+  if(v==='kyc') renderKyc();
+  if(v==='authorized') renderAuthorized();
+  if(v==='chat') renderChat();
+  if(v==='files') renderFiles();
+  if(v==='wallet') renderWallet();
+  if(v==='restrictions') renderRestrictions();
+  if(v==='invwallets') renderInvWallets();
+  if(v==='savwallets') renderSavWallets();
+  render();
+}
+
+function badges(){
+  const ns=S.pendingSignups.length,nt=S.pendingTransfers.length;
+  const nm=(S.messages||[]).filter(m=>m.toType==='admin'&&!m.read).length;
+  const nch=(S.pendingChanges||[]).filter(c=>c.status==='pending').length;
+  $('b-s').textContent=ns;$('b-s').classList.toggle('hidden',!ns);
+  $('b-t').textContent=nt;$('b-t').classList.toggle('hidden',!nt);
+  $('b-m').textContent=nm;$('b-m').classList.toggle('hidden',!nm);
+  if($('b-ch')){$('b-ch').textContent=nch;$('b-ch').classList.toggle('hidden',!nch);}
+}
+function toggleRecent(){
+  S.recentOpen=!S.recentOpen;
+  $('recent-wrap').classList.toggle('hidden',!S.recentOpen);
+  const btn=$('recent-chevron');
+  if(btn)btn.innerHTML=S.recentOpen?'<i class="fas fa-chevron-up"></i> Hide':'<i class="fas fa-chevron-down"></i> Show';
+}
+
+function renderHistory(customerId){
+  const list=(S.transactions||[]).filter(t=>t.customerId===customerId).sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  const el=$('p-history');
+  if(!el)return;
+  if(!list.length){el.innerHTML='<div class="empty" style="padding:16px">No history yet — history starts when funds are added.</div>';return}
+  el.innerHTML=list.map(t=>{
+    const up=t.type==='credit'||t.type==='transfer_in'||t.type==='loan'||t.type==='deposit';
+    const party=t.fromName||t.toName||'';
+    const partyLine=party?`<div style="font-size:.72rem;color:var(--g500)">${t.fromName?'From: '+esc(t.fromName):(t.toName?'To: '+esc(t.toName):'')}</div>`:'';
+    return `<div style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--g100);align-items:flex-start">
+      <div style="min-width:0;flex:1">
+        <strong>${esc(t.note||t.type)}</strong>
+        ${partyLine}
+        <div style="font-size:.75rem;color:var(--g500)">${fmt(t.timestamp)} · <span class="st ${t.status==='completed'||!t.status?'st-a':'st-p'}">${esc(t.status||'completed')}</span></div>
+      </div>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-weight:700;color:${up?'var(--ok)':'var(--bad)'}">${up?'+':'−'}${money(t.amount)}</div>
+        <button type="button" class="btn btn-g btn-sm" style="margin-top:6px;padding:3px 8px;font-size:.7rem" onclick="editTxnDate('${t.id}')"><i class="fas fa-calendar-alt"></i> Date</button>
+        <button type="button" class="btn btn-g btn-sm" style="margin-top:6px;padding:3px 8px;font-size:.7rem" onclick="editTxn('${t.id}')"><i class="fas fa-edit"></i> Edit</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.editTxnDate=async function(txId){
+  const t=(S.transactions||[]).find(x=>x.id===txId);
+  if(!t){toast('Transaction not found','error');return;}
+  let current='';
+  try{
+    const d=new Date(t.timestamp);
+    if(!isNaN(d.getTime())){
+      const pad=n=>String(n).padStart(2,'0');
+      current=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+    }
+  }catch(e){}
+  const raw=prompt('Edit TRANSACTION date & time\nFormat: YYYY-MM-DD or YYYY-MM-DDTHH:MM\nAllowed range tip: 2024-03-21 to 2025-12-29\n\nCurrent: '+(t.timestamp||''), current||String(t.timestamp||'').slice(0,16));
+  if(raw===null) return;
+  let val=(raw||'').trim();
+  if(!val){toast('Date required','error');return;}
+  if(/^\d{4}-\d{2}-\d{2}$/.test(val)) val=val+'T12:00:00.000Z';
+  else if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(val)) val=val+':00.000Z';
+  else if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(val)) val=val+'.000Z';
+  const parsed=new Date(val);
+  if(isNaN(parsed.getTime())){toast('Invalid date','error');return;}
+  const day=parsed.toISOString().slice(0,10);
+  if(day<'2024-03-21'||day>'2025-12-29'){
+    if(!confirm('Date '+day+' is outside Mar 21 2024 – Dec 29 2025. Save anyway?')) return;
+  }
+  t.timestamp=parsed.toISOString();
+  await saveBin();
+  toast('Transaction date updated to '+fmt(t.timestamp));
+  if(S.cur) renderHistory(S.cur);
+  render();
+};
+
+
+/** Randomize ALL transaction history dates for one customer between 2024-03-21 and 2025-12-29 */
+window.adminRandomizeTxnHistory = async function(customerId){
+  const c = (S.customers||[]).find(x => x.id === customerId);
+  if(!c){ toast('Customer not found','error'); return; }
+  const list = (S.transactions||[]).filter(t => t.customerId === customerId);
+  if(!list.length){ toast('No transactions for this customer'); return; }
+  if(!confirm('Randomize '+list.length+' transaction date(s) for '+c.name+' ('+(c.accountNumber||'')+')?\n\nEach date will be between Mar 21, 2024 and Dec 29, 2025.')) return;
+  const start = new Date(Date.UTC(2024, 2, 21, 0, 0, 0)).getTime();
+  const end = new Date(Date.UTC(2025, 11, 29, 23, 59, 59)).getTime();
+  list.forEach(t => {
+    const ms = start + Math.floor(Math.random() * (end - start + 1));
+    // keep a random time of day
+    t.timestamp = new Date(ms).toISOString();
+  });
+  // sort-friendly: optional slight ordering by regenerating ascending times
+  list.sort((a,b) => new Date(a.timestamp) - new Date(b.timestamp));
+  await saveBin();
+  toast('Updated '+list.length+' transaction date(s) for '+c.name);
+  if(S.cur === customerId) renderHistory(customerId);
+  render();
+};
+
+/** Find customer by account and randomize their transaction history (helper) */
+window.adminRandomizeTxnByAccount = async function(acc){
+  const a = String(acc||'').trim().toUpperCase();
+  const c = (S.customers||[]).find(x => String(x.accountNumber||'').toUpperCase() === a);
+  if(!c){ toast('No customer with account '+acc,'error'); return; }
+  return adminRandomizeTxnHistory(c.id);
+};
+
+window.editTxn=async function(txId){
+  const t=(S.transactions||[]).find(x=>x.id===txId);
+  if(!t){toast('Transaction not found','error');return;}
+  const newNote=prompt('Note / description (shown on customer history):', t.note||'');
+  if(newNote===null) return;
+  const newAmtStr=prompt('Amount (number only):', String(t.amount||0));
+  if(newAmtStr===null) return;
+  const newAmt=parseFloat(newAmtStr);
+  if(isNaN(newAmt)||newAmt<0){toast('Invalid amount','error');return;}
+  const newFrom=prompt('Sender / From name (for credits — leave blank to clear):', t.fromName||'');
+  if(newFrom===null) return;
+  const newTo=prompt('Receiver / To name (for debits — leave blank to clear):', t.toName||'');
+  if(newTo===null) return;
+  const newDate=prompt('Timestamp (ISO or leave as-is):\n'+t.timestamp, t.timestamp);
+  if(newDate===null) return;
+  const newType=prompt('Type: credit | debit | transfer_in | transfer_out | loan | deposit', t.type||'credit');
+  if(newType===null) return;
+  const oldAmt=t.amount||0;
+  const wasCredit=t.type==='credit'||t.type==='transfer_in'||t.type==='loan'||t.type==='deposit';
+  t.note=newNote;
+  t.amount=Math.round(newAmt*100)/100;
+  t.fromName=(newFrom||'').trim()||undefined;
+  t.toName=(newTo||'').trim()||undefined;
+  t.timestamp=newDate||t.timestamp;
+  t.type=(newType||t.type||'credit').trim();
+  // Optionally rebalance customer if amount/type changed and same customer
+  const c=(S.customers||[]).find(x=>x.id===t.customerId);
+  if(c && (oldAmt!==t.amount || wasCredit!==(t.type==='credit'||t.type==='transfer_in'||t.type==='loan'||t.type==='deposit'))){
+    // Reverse old effect then apply new
+    if(wasCredit) c.balance=Math.round((c.balance-oldAmt)*100)/100;
+    else c.balance=Math.round((c.balance+oldAmt)*100)/100;
+    const nowCredit=t.type==='credit'||t.type==='transfer_in'||t.type==='loan'||t.type==='deposit';
+    if(nowCredit) c.balance=Math.round((c.balance+t.amount)*100)/100;
+    else c.balance=Math.round((c.balance-t.amount)*100)/100;
+    t.balanceAfter=c.balance;
+    if($('p-bal')&&S.cur===c.id) $('p-bal').textContent=money(c.balance);
+  }
+  await saveBin();
+  toast('Transaction updated');
+  renderHistory(t.customerId);
+  render();
+};
+
+function render(){
+  badges();
+  if(S.view==='overview'){
+    $('s-c').textContent=S.customers.length;
+    $('s-b').textContent=money(S.customers.reduce((s,c)=>s+(c.balance||0),0));
+    $('s-s').textContent=S.pendingSignups.length;$('s-t').textContent=S.pendingTransfers.length;if($('s-loan'))$('s-loan').textContent=(S.loanApplications||[]).filter(l=>!l.status||l.status==='pending'||l.status==='pending_review').length;
+    const ags=S.agents||[];
+    if($('s-ag'))$('s-ag').textContent=ags.length;
+    if($('s-agb'))$('s-agb').textContent=money(ags.reduce((s,a)=>s+(a.balance||0),0));
+    if($('s-agc'))$('s-agc').textContent=S.customers.filter(c=>c.createdBy&&c.createdBy!=='master').length;
+    if($('s-ags'))$('s-ags').textContent=ags.filter(a=>a.status==='suspended').length;
+    const recent=[...S.transactions].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp)).slice(0,8);
+    $('recent').innerHTML=recent.length?recent.map(t=>{
+      const up=t.type==='credit'||t.type==='transfer_in';
+      return `<div class="tx"><div class="txi ${up?'up':'dn'}"><i class="fas fa-arrow-${up?'up':'down'}"></i></div>
+        <div style="flex:1"><div style="font-weight:600;font-size:.9rem">${t.customerName||''} · ${t.accountNumber||''}</div>
+        <div style="font-size:.8rem;color:var(--g500)">${fmt(t.timestamp)}${t.note?' · '+t.note:''}</div></div>
+        <div style="font-weight:700;color:${up?'var(--ok)':'var(--bad)'}">${up?'+':'−'}${money(t.amount)}</div></div>`;
+    }).join(''):'<div class="empty"><i class="fas fa-receipt" style="font-size:2rem;display:block;margin-bottom:8px"></i>No transactions</div>';
+  }
+  if(S.view==='customers'){
+    const q=($('q').value||'').toLowerCase();
+    let list=S.customers;
+    if(q)list=list.filter(c=>(c.name||'').toLowerCase().includes(q)||(c.accountNumber||'').toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q)||(c.username||'').toLowerCase().includes(q));
+    $('tb-c').innerHTML=list.length?list.map(c=>{
+      const st=c.status==='frozen'?'f':c.restriction?'r':'a';
+      const lab=c.status==='frozen'?'Frozen':c.restriction?'Restricted':'Active';
+      const isAgent=c.createdBy&&c.createdBy!=='master';
+      const creator=isAgent?(S.agents.find(a=>a.id===c.createdBy)||{}).name||'Agent':'Master';
+      const col=isAgent?agentColor(c.createdBy):'#1a56db';
+      const rowStyle=isAgent?agentColorStyle(c.createdBy):'';
+      const avHtml = c.profilePic
+        ? `<img class="av" src="${c.profilePic}" alt="" style="object-fit:cover;padding:0;background:#eee"/>`
+        : `<span class="av" style="background:${col};color:#fff">${ini(c.name)}</span>`;
+      return `<tr style="${rowStyle}"><td><strong>${c.accountNumber}</strong><div style="font-size:.72rem;color:var(--g500);font-family:monospace">RTN ${c.routingNumber||'—'}</div></td>
+        <td>${avHtml}<strong>${c.name}</strong><div style="font-size:.75rem;color:var(--g500)">@${c.username||''} · by <span style="color:${col};font-weight:700">${creator}</span></div></td>
+        <td>${c.email||'—'}</td><td class="bal">${money(c.balance)}</td>
+        <td><span class="st st-${st}">${lab}</span></td>
+        <td><button class="btn btn-g btn-sm" onclick="openC('${c.id}')"><i class="fas fa-wallet"></i></button></td></tr>`;
+    }).join(''):'<tr><td colspan="6"><div class="empty">No customers</div></td></tr>';
+  }
+  if(S.view==='signups'){
+    const list=S.pendingSignups;
+    $('tb-s').innerHTML=list.length?list.map(s=>`<tr>
+      <td>${fmt(s.submittedAt)}</td><td><strong>${s.name||'—'}</strong></td><td>${s.email||'—'}</td><td>${s.phone||'—'}</td><td>${s.username||'—'}</td>
+      <td class="acts"><button class="btn btn-ok btn-sm" onclick="approveS('${s.id}')"><i class="fas fa-check"></i> Approve</button>
+      <button class="btn btn-bad btn-sm" onclick="declineS('${s.id}')"><i class="fas fa-times"></i> Decline</button></td></tr>`).join(''):'<tr><td colspan="6"><div class="empty">No pending sign-ups</div></td></tr>';
+  }
+  if(S.view==='transfers'){
+    const list=S.pendingTransfers;
+    $('tb-t').innerHTML=list.length?list.map(t=>`<tr>
+      <td>${fmt(t.timestamp||t.submittedAt)}</td>
+      <td><strong>${t.fromName||''}</strong><div style="font-size:.8rem;color:var(--g500)">${t.fromAccount||''}</div></td>
+      <td><strong>${t.toName||t.toAccount||'—'}</strong><div style="font-size:.8rem;color:var(--g500)">${t.toAccount||''}</div></td>
+      <td style="font-weight:700;color:var(--bad)">${money(t.amount)}</td><td>${t.note||'—'}</td>
+      <td class="acts"><button class="btn btn-ok btn-sm" onclick="approveT('${t.id}')"><i class="fas fa-check"></i> Approve</button>
+      <button class="btn btn-bad btn-sm" onclick="declineT('${t.id}')"><i class="fas fa-undo"></i> Bounce</button></td></tr>`).join(''):'<tr><td colspan="6"><div class="empty">No pending transfers</div></td></tr>';
+  }
+  if(S.view==='transactions'){
+    const f=$('txf').value;let list=[...S.transactions].sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+    if(f==='transfer')list=list.filter(t=>(t.type||'').includes('transfer'));
+    else if(f!=='all')list=list.filter(t=>t.type===f);
+    $('tb-x').innerHTML=list.length?list.map(t=>{
+      const up=t.type==='credit'||t.type==='transfer_in'||t.type==='loan'||t.type==='deposit';
+      const tid=String(t.id||'').replace(/'/g,"\\'");
+      return `<tr><td>${fmt(t.timestamp)}</td><td><strong>${t.accountNumber||'—'}</strong></td><td>${t.customerName||'—'}</td>
+        <td><span class="st ${up?'st-a':'st-f'}">${t.type}</span></td>
+        <td style="font-weight:700;color:${up?'var(--ok)':'var(--bad)'}">${up?'+':'−'}${money(t.amount)}</td>
+        <td>${money(t.balanceAfter)}</td><td>${esc(t.note||'—')}</td>
+        <td class="acts" style="white-space:nowrap">
+          <button type="button" class="btn btn-g btn-sm" onclick="editTxnDate('${tid}')" title="Edit date"><i class="fas fa-calendar-alt"></i> Date</button>
+          <button type="button" class="btn btn-g btn-sm" onclick="editTxn('${tid}')" title="Edit full"><i class="fas fa-edit"></i></button>
+        </td></tr>`;
+    }).join(''):'<tr><td colspan="8"><div class="empty">No transactions</div></td></tr>';
+  }
+  if(S.view==='mail') renderMail();
+  if(S.view==='agents'){
+    const list=S.agents||[];
+    $('tb-ag').innerHTML=list.length?list.map(a=>{
+      const nCust=S.customers.filter(c=>c.createdBy===a.id).length;
+      const st=a.status==='suspended'?'f':a.restriction?'r':'a';
+      const lab=a.status==='suspended'?'Suspended':a.restriction?'Restricted':'Active';
+      const col=a.color||agentColor(a.id);
+      return `<tr style="${agentColorStyle(a.id)}">
+        <td><span class="av" style="background:${col};color:#fff">${ini(a.name)}</span><strong>${a.name}</strong>
+          <div style="font-size:.75rem;color:var(--g500)">${a.email||''}</div>
+          <div style="margin-top:4px;display:inline-flex;align-items:center;gap:6px;font-size:.7rem;font-weight:700;color:${col}"><span style="width:10px;height:10px;border-radius:50%;background:${col};display:inline-block;box-shadow:0 0 0 2px #fff,0 0 0 3px ${col}"></span> Color tag</div>
+        </td>
+        <td>@${a.username||''}<div style="font-size:.72rem;color:var(--g500);margin-top:2px">Ref: <strong style="color:var(--p);font-family:monospace">${a.referralId||'—'}</strong></div></td>
+        <td class="bal">${money(a.balance)}</td>
+        <td>${nCust}</td>
+        <td>${a.customerLimit||3}</td>
+        <td><span class="st st-${st}">${lab}</span></td>
+        <td><button class="btn btn-g btn-sm" onclick="openAgent('${a.id}')"><i class="fas fa-cog"></i></button></td></tr>`;
+    }).join(''):'<tr><td colspan="7"><div class="empty">No agents yet — create one to let staff onboard customers</div></td></tr>';
+  }
+  if(S.view==='changes'){
+    const list=(S.pendingChanges||[]).filter(c=>c.status==='pending').sort((a,b)=>new Date(b.submittedAt)-new Date(a.submittedAt));
+    $('tb-ch').innerHTML=list.length?list.map(ch=>{
+      let det='';
+      if(ch.changeType==='credentials'){
+        det=(ch.newUsername?'New username: <strong>'+ch.newUsername+'</strong>':'')+(ch.newPassword?' · New password set':'');
+      } else if(ch.changeType==='txPin'){
+        det='New transaction PIN requested';
+      } else det=ch.changeType||'—';
+      return `<tr>
+        <td>${fmt(ch.submittedAt)}</td>
+        <td><strong>${ch.customerName||'—'}</strong><div style="font-size:.8rem;color:var(--g500)">${ch.accountNumber||''}</div></td>
+        <td><span class="st st-p">${ch.changeType==='txPin'?'Transaction PIN':'Login credentials'}</span></td>
+        <td>${det}</td>
+        <td class="acts"><button class="btn btn-ok btn-sm" onclick="approveChange('${ch.id}')"><i class="fas fa-check"></i> Approve</button>
+        <button class="btn btn-bad btn-sm" onclick="declineChange('${ch.id}')"><i class="fas fa-times"></i> Decline</button></td></tr>`;
+    }).join(''):'<tr><td colspan="5"><div class="empty">No pending credential or PIN changes</div></td></tr>';
+  }
+  if(S.view==='delete'){
+    renderDeleteAgents();
+    renderDeleteCustomers();
+  }
+}
+
+/* ---- Delete ---- */
+window.deleteTab=function(tab){
+  S.deleteSub=tab;
+  ['choice','agents','customers'].forEach(t=>{
+    const el=$('del-'+t);if(el)el.classList.toggle('hidden',t!==tab);
+  });
+  ['Choice','Agents','Customers'].forEach(lab=>{
+    const btn=$('delTab'+lab);if(btn)btn.classList.toggle('on',tab===lab.toLowerCase());
+  });
+  if(tab==='agents')renderDeleteAgents();
+  if(tab==='customers')renderDeleteCustomers();
+};
+function renderDeleteAgents(){
+  const el=$('tb-del-ag');if(!el)return;
+  const list=S.agents||[];
+  el.innerHTML=list.length?list.map(a=>{
+    const nCust=S.customers.filter(c=>c.createdBy===a.id).length;
+    const st=a.status==='suspended'?'f':a.restriction?'r':'a';
+    const lab=a.status==='suspended'?'Suspended':a.restriction?'Restricted':'Active';
+    const col=a.color||agentColor(a.id);
+    return `<tr style="${agentColorStyle(a.id)}">
+      <td><span class="av" style="background:${col};color:#fff">${ini(a.name)}</span><strong>${a.name}</strong>
+        <div style="font-size:.75rem;color:var(--g500)">${a.email||''}</div></td>
+      <td>@${a.username||''}</td>
+      <td class="bal">${money(a.balance)}</td>
+      <td>${nCust}</td>
+      <td><span class="st st-${st}">${lab}</span></td>
+      <td><button class="btn btn-bad btn-sm" onclick="deleteAgent('${a.id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
+  }).join(''):'<tr><td colspan="6"><div class="empty">No agents to delete</div></td></tr>';
+}
+function renderDeleteCustomers(){
+  const el=$('tb-del-c');if(!el)return;
+  const q=(($('del-q')&&$('del-q').value)||'').toLowerCase();
+  let list=S.customers||[];
+  if(q)list=list.filter(c=>(c.name||'').toLowerCase().includes(q)||(c.accountNumber||'').toLowerCase().includes(q)||(c.email||'').toLowerCase().includes(q)||(c.username||'').toLowerCase().includes(q));
+  el.innerHTML=list.length?list.map(c=>{
+    const st=c.status==='frozen'?'f':c.restriction?'r':'a';
+    const lab=c.status==='frozen'?'Frozen':c.restriction?'Restricted':'Active';
+    return `<tr>
+      <td><strong>${c.accountNumber}</strong></td>
+      <td><span class="av">${ini(c.name)}</span><strong>${c.name}</strong>
+        <div style="font-size:.75rem;color:var(--g500)">@${c.username||''}</div></td>
+      <td>${c.email||'—'}</td>
+      <td class="bal">${money(c.balance)}</td>
+      <td><span class="st st-${st}">${lab}</span></td>
+      <td><button class="btn btn-bad btn-sm" onclick="deleteCustomer('${c.id}')"><i class="fas fa-trash"></i> Delete</button></td></tr>`;
+  }).join(''):'<tr><td colspan="6"><div class="empty">No customers to delete</div></td></tr>';
+}
+window.deleteAgent=async function(id){
+  const a=(S.agents||[]).find(x=>x.id===id);if(!a)return;
+  const nCust=S.customers.filter(c=>c.createdBy===a.id).length;
+  const msg='Permanently delete agent "'+a.name+'" (@'+a.username+')?\n\nTheir portal login will become invalid.'+(nCust?'\n\n'+nCust+' customer(s) they created will be reassigned to Master Admin.':'');
+  if(!confirm(msg))return;
+  S.customers.forEach(c=>{if(c.createdBy===a.id)c.createdBy='master';});
+  S.agents=(S.agents||[]).filter(x=>x.id!==id);
+  S.messages=(S.messages||[]).filter(m=>!(m.fromType==='agent'&&m.fromId===id));
+  await saveBin();
+  toast('Agent deleted · login invalid');
+  renderDeleteAgents();
+  render();
+};
+window.deleteCustomer=async function(id){
+  const c=S.customers.find(x=>x.id===id);if(!c)return;
+  const msg='Permanently delete customer "'+c.name+'" ('+c.accountNumber+')?\n\nBalance: '+money(c.balance)+'\nThis cannot be undone.';
+  if(!confirm(msg))return;
+  S.customers=S.customers.filter(x=>x.id!==id);
+  S.pendingTransfers=(S.pendingTransfers||[]).filter(t=>t.fromCustomerId!==id&&t.toCustomerId!==id);
+  S.pendingChanges=(S.pendingChanges||[]).filter(ch=>ch.customerId!==id);
+  S.messages=(S.messages||[]).filter(m=>m.fromId!==id&&m.toId!==id);
+  await saveBin();
+  toast('Customer '+c.name+' deleted');
+  renderDeleteCustomers();
+  render();
+}
+$('txf').onchange=()=>render();
+$('q').oninput=()=>{if(S.view!=='customers')switchView('customers');render()};
+
+/* ---- Mail ---- */
+window.mailTab=function(tab){
+  $('mailTabInbox').classList.toggle('on',tab==='inbox');
+  $('mailTabCompose').classList.toggle('on',tab==='compose');
+  $('mailInboxView').classList.toggle('hidden',tab!=='inbox');
+  $('mailComposeView').classList.toggle('hidden',tab!=='compose');
+  if(tab==='compose'){
+    const sel=$('mailToCust');
+    sel.innerHTML='<option value="">Select customer…</option>'+S.customers.map(c=>`<option value="${c.id}">${c.name} (${c.accountNumber})</option>`).join('');
+  }
+};
+function renderMail(){
+  const list=[...(S.messages||[])].slice().sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  const el=$('mailList');
+  if(!list.length){
+    el.innerHTML='<div class="empty"><i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:8px"></i>No messages</div>';
+    return;
+  }
+  el.innerHTML=list.map(m=>{
+    const unread=(m.toType==='admin'||m.toType==='master')&&!m.read;
+    let who='';
+    if(m.fromType==='customer') who='Customer: '+(m.fromName||'');
+    else if(m.fromType==='agent') who='Agent: '+(m.fromName||'');
+    else if(m.fromType==='admin') who='To: '+(m.toName||'Customer');
+    else who=(m.fromName||m.toName||'');
+    const party=m.agentName?(' · via agent '+m.agentName):'';
+    const sel=S.mailSel===m.id?'selected':'';
+    return `<div class="mail-row ${unread?'unread':''} ${sel}" onclick="openMail('${m.id}')">
+      <div class="msubj">${m.subject||'(No subject)'}${unread?' <span class="st st-p">Unread</span>':''}</div>
+      <div class="mmeta"><span>${who}${party}</span><span>${fmt(m.timestamp)}</span></div>
+      <div class="mprev">${(m.body||'').slice(0,80)}</div>
+      <div class="mail-acts" onclick="event.stopPropagation()">
+        <button type="button" class="btn btn-bad btn-sm" onclick="deleteMail('${m.id}')" title="Delete this message"><i class="fas fa-trash-alt"></i> Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+window.deleteMail=async function(id){
+  if(!id) return;
+  if(!confirm('Delete this message permanently?')) return;
+  S.messages=(S.messages||[]).filter(m=>m.id!==id);
+  if(S.mailSel===id){
+    S.mailSel=null;
+    const r=$('mailRead');
+    if(r) r.innerHTML='<div class="empty"><i class="fas fa-envelope-open" style="font-size:2rem;display:block;margin-bottom:8px"></i>Select a message</div>';
+  }
+  await saveBin();
+  toast('Message deleted');
+  renderMail();
+  badges();
+};
+window.deleteAllMail=async function(scope){
+  const all=S.messages||[];
+  let next=all;
+  if(scope==='read'){
+    if(!confirm('Delete all read inbox messages?')) return;
+    next=all.filter(m=>{
+      const inbound=(m.toType==='admin'||m.toType==='master');
+      if(inbound && m.read) return false;
+      return true;
+    });
+  } else if(scope==='unread'){
+    if(!confirm('Delete all unread inbox messages?')) return;
+    next=all.filter(m=>{
+      const inbound=(m.toType==='admin'||m.toType==='master');
+      if(inbound && !m.read) return false;
+      return true;
+    });
+  } else {
+    if(!confirm('Delete ALL mail messages (read and unread)? This cannot be undone.')) return;
+    next=[];
+  }
+  S.messages=next;
+  S.mailSel=null;
+  const r=$('mailRead');
+  if(r) r.innerHTML='<div class="empty"><i class="fas fa-envelope-open" style="font-size:2rem;display:block;margin-bottom:8px"></i>Select a message</div>';
+  await saveBin();
+  toast('Messages deleted');
+  renderMail();
+  badges();
+};
+
+window.openMail=async function(id){
+  const m=(S.messages||[]).find(x=>x.id===id);if(!m)return;
+  S.mailSel=id;
+  if((m.toType==='admin'||m.toType==='master')&&!m.read){m.read=true;await saveBin();badges();try{renderMail();}catch(e){}}
+  const who=m.fromType==='customer'?`From: ${m.fromName||'Customer'} (${m.fromAccount||m.toAccount||''})`:
+    (m.fromType==='agent'?`From agent: ${m.fromName||''}`:`To: ${m.toName||'Customer'}`);
+  const safeName=(m.fromName||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  const safeSubj=('RE: '+(m.subject||'')).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+  $('mailRead').innerHTML=`<h3>${String(m.subject||'(No subject)').replace(/</g,'&lt;')}</h3>
+    <div class="mfrom">${who} · ${fmt(m.timestamp)}</div>
+    <div class="mbody">${(m.body||'').replace(/</g,'&lt;')}</div>
+    <div class="fa" style="justify-content:flex-start;margin-top:14px;flex-wrap:wrap;gap:8px">
+      ${m.fromType==='customer'?`<button class="btn btn-p btn-sm" onclick="replyMail('${m.fromId}','${safeName}','${safeSubj}')"><i class="fas fa-reply"></i> Reply</button>`:''}
+      <button class="btn btn-bad btn-sm" onclick="deleteMail('${m.id}')"><i class="fas fa-trash-alt"></i> Delete message</button>
+    </div>`;
+};
+
+window.replyMail=function(custId,name,subj){
+  mailTab('compose');
+  setTimeout(()=>{
+    $('mailToCust').value=custId;
+    $('mailSubj').value=subj.startsWith('RE:')?subj:'RE: '+subj;
+    $('mailBody').focus();
+  },50);
+};
+window.sendAdminMail=async function(){
+  const toId=$('mailToCust').value;
+  const subj=($('mailSubj').value||'').trim();
+  const body=($('mailBody').value||'').trim();
+  if(!toId||!body){toast('Select customer and write a message','error');return}
+  const c=S.customers.find(x=>x.id===toId);if(!c){toast('Customer not found','error');return}
+  S.messages=S.messages||[];
+  S.messages.unshift({
+    id:gid('m'),
+    fromType:'admin', fromId:'admin', fromName:'City Legacy Support',
+    toType:'customer', toId:c.id, toName:c.name, toAccount:c.accountNumber,
+    subject:subj||'Message from City Legacy Support',
+    body, timestamp:new Date().toISOString(), read:false
+  });
+  await saveBin();
+  toast('Message sent to '+c.name);
+  $('mailSubj').value='';$('mailBody').value='';
+  mailTab('inbox');
+  renderMail();
+};
+
+window.approveS=async id=>{
+  const i=S.pendingSignups.findIndex(s=>s.id===id);if(i<0){toast('Application not found','error');return;}
+  const app=S.pendingSignups[i];
+  const uname=(app.username||app.preferred_username||(app.email||'').split('@')[0]||'').toString().trim().toLowerCase();
+  if(!uname){toast('Application missing username','error');return;}
+  if(S.customers.some(c=>(c.username||'').toLowerCase()===uname)){toast('Username already exists','error');return;}
+  if(app.email && S.customers.some(c=>(c.email||'').toLowerCase()===(app.email||'').toLowerCase())){
+    if(!confirm('A customer with this email already exists. Approve and create another account anyway?')) return;
+  }
+  const now=new Date().toISOString();
+  const fullName=(app.name||app.fullName||[app.firstName,app.lastName].filter(Boolean).join(' ')||'Customer').toString().trim();
+  const c={
+    id:gid('c'),
+    accountNumber:gacc(),
+    routingNumber:groute(),
+    name:fullName,
+    email:(app.email||'').toString().trim().toLowerCase(),
+    phone:app.phone||app.phoneNumber||'',
+    address:app.address||app.homeAddress||'',
+    balance:0,
+    status:'active',
+    restriction:null,
+    joined:now.slice(0,10),
+    createdAt:now,
+    username:uname,
+    password:app.password||app.pass||gpwd(),
+    txPin:app.txPin||'2468',
+    createdBy:app.createdBy||app.agentId||'master',
+    source:app.source||'signup',
+    accountType:app.accountType||app.product||'Checking'
+  };
+  S.customers.push(c);
+  S.pendingSignups.splice(i,1);
+  S.messages=S.messages||[];
+  S.messages.unshift({
+    id:gid('m'),
+    fromType:'admin',fromId:'admin',fromName:'City Legacy Bank',
+    toType:'customer',toId:c.id,toName:c.name,toAccount:c.accountNumber,
+    subject:'Welcome — account approved',
+    body:'Hello '+c.name+',\n\nYour City Legacy Bank account has been approved.\n\nAccount: '+c.accountNumber+'\nRouting: '+c.routingNumber+'\nUsername: '+c.username+'\n\nSign in to online banking to get started.\n\n— City Legacy Bank',
+    timestamp:now,read:false,msgType:'signup_approved'
+  });
+  S.auditLog=S.auditLog||[];
+  S.auditLog.unshift({id:gid('a'),action:'signup_approved',customerId:c.id,accountNumber:c.accountNumber,name:c.name,timestamp:now});
+  await saveBin();
+  toast('Approved '+c.name+' · '+c.accountNumber);
+  render();
+};
+window.declineS=async id=>{if(!confirm('Decline this application?'))return;S.pendingSignups=S.pendingSignups.filter(s=>s.id!==id);await saveBin();toast('Declined');render()};
+
+window.approveT=async id=>{
+  const i=S.pendingTransfers.findIndex(t=>t.id===id);if(i<0)return;
+  const tx=S.pendingTransfers[i];
+  const from=S.customers.find(c=>c.id===tx.fromCustomerId||c.accountNumber===tx.fromAccount);
+  if(!from){toast('Sender account not found','error');return}
+  const to=S.customers.find(c=>c.id===tx.toCustomerId||c.accountNumber===tx.toAccount);
+  const self = to && from && to.id === from.id;
+  const now=new Date().toISOString();
+  // held=true means funds already deducted from sender on submit
+  if(tx.held){
+    if(to && !self){
+      // credit recipient
+      to.balance=Math.round((to.balance+tx.amount)*100)/100;
+    }
+    // self-transfer or external: debit already applied; no extra credit to sender
+  } else {
+    if(from.balance<tx.amount){toast('Insufficient funds','error');return}
+    from.balance=Math.round((from.balance-tx.amount)*100)/100;
+    if(to && !self) to.balance=Math.round((to.balance+tx.amount)*100)/100;
+  }
+  // mark pending debit as completed / add transfer_out
+  if(tx.held){
+    from.heldOutgoing=Math.max(0, Math.round(((from.heldOutgoing||0)-tx.amount)*100)/100);
+  }
+  (S.transactions||[]).forEach(t=>{
+    if(t.pendingTransferId===tx.id && (t.pending||t.status==='pending')){ t.status='completed'; t.pending=false; t.balanceAfter=from.balance; }
+  });
+  S.transactions.unshift({id:gid('t'),customerId:from.id,accountNumber:from.accountNumber,customerName:from.name,type:'transfer_out',amount:tx.amount,balanceAfter:from.balance,note:'Transfer to '+(to?(to.name||to.accountNumber):(tx.toName||tx.toAccount||'external'))+(tx.note?' · '+tx.note:''),status:'completed',timestamp:now,toName:to?to.name:(tx.toName||''),toAccount:to?to.accountNumber:(tx.toAccount||'')});
+  if(to && !self){
+    S.transactions.unshift({id:gid('t'),customerId:to.id,accountNumber:to.accountNumber,customerName:to.name,type:'transfer_in',amount:tx.amount,balanceAfter:to.balance,note:'Transfer from '+from.name+(tx.note?' · '+tx.note:''),status:'completed',timestamp:now,fromName:from.name,fromAccount:from.accountNumber,meta:'incoming_transfer',notifyIncoming:true});
+    S.messages=S.messages||[];
+    S.messages.unshift({id:gid('m'),fromType:'system',fromId:'bank',fromName:'City Legacy Bank',toType:'customer',toId:to.id,toName:to.name,toAccount:to.accountNumber,subject:'Incoming funds · '+money(tx.amount),body:'You just received '+money(tx.amount)+' from '+from.name+'.',timestamp:now,read:false,msgType:'incoming_funds',amount:tx.amount,senderName:from.name});
+  }
+  S.pendingTransfers.splice(i,1);await saveBin();toast('Transfer approved '+money(tx.amount)+(self?' (self)':''));render();
+};
+window.declineT=async id=>{
+  if(!confirm('Decline? Funds will bounce back to sender.'))return;
+  const i=S.pendingTransfers.findIndex(t=>t.id===id);if(i<0)return;
+  const tx=S.pendingTransfers[i];
+  const from=S.customers.find(c=>c.id===tx.fromCustomerId||c.accountNumber===tx.fromAccount);
+  if(from&&tx.held){
+    from.balance=Math.round((from.balance+tx.amount)*100)/100;
+    from.heldOutgoing=Math.max(0, Math.round(((from.heldOutgoing||0)-tx.amount)*100)/100);
+    S.transactions.unshift({id:gid('t'),customerId:from.id,accountNumber:from.accountNumber,customerName:from.name,type:'credit',amount:tx.amount,balanceAfter:from.balance,note:'Transfer declined — funds returned',status:'reversed',timestamp:new Date().toISOString()});
+    (S.transactions||[]).forEach(t=>{
+      if(t.pendingTransferId===tx.id && (t.pending||t.status==='pending')){ t.status='reversed'; t.pending=false; t.note=(t.note||'')+' · reversed'; }
+    });
+  }
+  S.pendingTransfers.splice(i,1);await saveBin();toast('Declined — funds bounced');render();
+};
+
+window.openC=id=>{
+  const c=S.customers.find(x=>x.id===id);if(!c)return;S.cur=id;S.passVis=false;
+  if(c.profilePic){$('p-av').innerHTML='<img src="'+c.profilePic+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>';$('p-av').style.background='transparent';}else{$('p-av').textContent=ini(c.name);$('p-av').style.background=(c.createdBy&&c.createdBy!=='master')?agentColor(c.createdBy):'#1a56db';}
+  if($('p-name')) $('p-name').value=c.name||'';
+  $('p-acc').textContent='Account: '+c.accountNumber;
+  if($('p-em')) $('p-em').value=c.email||'';
+  if($('p-ph')) $('p-ph').value=c.phone||'';
+  if($('p-route'))$('p-route').textContent=c.routingNumber||'—';$('p-user').textContent=c.username||'—';
+  $('p-pass').textContent='••••••••';$('p-bal').textContent=money(c.balance);
+  if($('p-joined')){
+    let j=c.joined||c.createdAt||'';
+    if(j && j.length>=10) j=j.slice(0,10);
+    else if(j){ try{ j=new Date(j).toISOString().slice(0,10);}catch(e){ j=''; } }
+    $('p-joined').value=j||'';
+  }
+  const st=c.status==='frozen'?'Frozen':c.restriction?'Restricted':'Active';
+  $('p-st').textContent=st;$('p-st').className='st st-'+(c.status==='frozen'?'f':c.restriction?'r':'a');
+  $('adj-amt').value='';$('adj-note').value='';$('adj-date').value=nowLocalInput();if($('adj-from'))$('adj-from').value='';
+  // Agent assignment UI
+  const agLabel=(!c.createdBy||c.createdBy==='master')?'Master Admin':((S.agents.find(a=>a.id===c.createdBy)||{}).name||'Agent');
+  if($('p-agent'))$('p-agent').textContent=agLabel;
+  const sel=$('p-assign-agent');
+  if(sel){
+    sel.innerHTML='<option value="master">Master Admin (unassigned)</option>'+(S.agents||[]).map(a=>`<option value="${a.id}">${a.name} (@${a.username||''})</option>`).join('');
+    sel.value=(!c.createdBy||c.createdBy==='master')?'master':c.createdBy;
+  }
+  renderHistory(c.id);
+  $('modal').classList.remove('hidden');
+};
+const closeM=()=>{$('modal').classList.add('hidden');S.cur=null};
+$('mx').onclick=closeM;$('m-close').onclick=closeM;
+$('modal').onclick=e=>{if(e.target.id==='modal')closeM()};
+$('p-eye').onclick=()=>{const c=S.customers.find(x=>x.id===S.cur);if(!c)return;S.passVis=!S.passVis;$('p-pass').textContent=S.passVis?c.password:'••••••••'};
+$('p-regen').onclick=async()=>{const c=S.customers.find(x=>x.id===S.cur);if(!c||!confirm('New password for '+c.name+'?'))return;c.password=gpwd();S.passVis=true;$('p-pass').textContent=c.password;await saveBin();toast('Password updated')};
+$('adj-form').onsubmit=async e=>{e.preventDefault();const c=S.customers.find(x=>x.id===S.cur);if(!c)return;
+  if(c.status==='frozen'){toast('Account frozen','error');return}
+  const type=$('adj-type').value,amt=parseFloat($('adj-amt').value),note=$('adj-note').value.trim();
+  const fromName=($('adj-from')&&$('adj-from').value||'').trim();
+  const ts=toISOLocal($('adj-date').value);
+  if(!amt||amt<=0){toast('Invalid amount','error');return}
+  if(type==='debit'&&amt>c.balance){toast('Insufficient funds','error');return}
+  c.balance=Math.round((c.balance+(type==='credit'?amt:-amt))*100)/100;
+  let histNote=note||(type==='credit'?'Admin credit':'Admin debit');
+  if(type==='credit'&&fromName){
+    histNote='Transfer from '+fromName+(note?' · '+note:'');
+  } else if(type==='debit'&&fromName){
+    histNote='Transfer to '+fromName+(note?' · '+note:'');
+  }
+  const txObj={id:gid('t'),customerId:c.id,accountNumber:c.accountNumber,customerName:c.name,type,amount:amt,balanceAfter:c.balance,note:histNote,status:'completed',timestamp:ts};
+  if(fromName){
+    if(type==='credit'){ txObj.fromName=fromName; }
+    else { txObj.toName=fromName; }
+  }
+  S.transactions.unshift(txObj);
+  $('p-bal').textContent=money(c.balance);await saveBin();toast((type==='credit'?'Credited ':'Debited ')+money(amt));renderHistory(c.id);render();$('adj-amt').value='';if($('adj-from'))$('adj-from').value='';$('adj-note').value=''};
+$('btn-assign-agent').onclick=async()=>{
+  const c=S.customers.find(x=>x.id===S.cur);if(!c)return;
+  const to=$('p-assign-agent').value||'master';
+  if(to!=='master'){
+    const ag=(S.agents||[]).find(a=>a.id===to);
+    if(!ag){toast('Agent not found','error');return}
+    // count excluding this customer if already under that agent
+    const nMine=S.customers.filter(x=>x.createdBy===ag.id&&x.id!==c.id).length;
+    if(nMine>=(ag.customerLimit||3)){toast('That agent is at customer limit','error');return}
+  }
+  const prev=c.createdBy;
+  c.createdBy=to;
+  await saveBin();
+  const label=to==='master'?'Master Admin':((S.agents.find(a=>a.id===to)||{}).name||'agent');
+  toast(c.name+' moved to '+label);openC(c.id);render();
+};
+
+$('btn-save-profile').onclick=async()=>{
+  const c=S.customers.find(x=>x.id===S.cur);if(!c)return;
+  const name=($('p-name').value||'').trim();
+  const email=($('p-em').value||'').trim();
+  const phone=($('p-ph').value||'').trim();
+  const joined=($('p-joined').value||'').trim();
+  if(!name){toast('Name is required','error');return;}
+  if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){toast('Invalid email','error');return;}
+  c.name=name;
+  c.email=email;
+  c.phone=phone;
+  if(joined){
+    c.joined=joined;
+    if(c.createdAt && String(c.createdAt).length>=10){
+      const rest=String(c.createdAt).slice(10);
+      c.createdAt=joined+(rest||'T12:00:00.000Z');
+    } else if(!c.createdAt){
+      c.createdAt=joined+'T12:00:00.000Z';
+    }
+  }
+  (S.transactions||[]).forEach(tx=>{
+    if(tx.customerId===c.id) tx.customerName=name;
+  });
+  await saveBin();
+  toast('Profile saved for '+name);
+  openC(c.id);render();
+};
+
+$('btn-freeze').onclick=async()=>{const c=S.customers.find(x=>x.id===S.cur);if(!c)return;if(c.status==='frozen'){c.status='active';c.freezeReason='';c.restrictionReason=c.restriction?c.restrictionReason:'';await saveBin();openC(c.id);toast(c.name+' is active');render();return;}openRestrictEditor('customer',c.id);$('rm-type').value='frozen';};
+$('btn-restrict').onclick=async()=>{const c=S.customers.find(x=>x.id===S.cur);if(!c)return;if(c.restriction){c.restriction=null;c.restrictionReason='';await saveBin();openC(c.id);toast('Unrestricted');render();return;}openRestrictEditor('customer',c.id);$('rm-type').value='restriction';};
+
+$('btn-add').onclick=()=>{
+  $('add-form').reset();$('n-pass').value=gpwd();$('n-date').value=nowLocalInput();$('n-note').value='Initial account funding';
+  const nas=$('n-agent');
+  if(nas) nas.innerHTML='<option value="master">Master Admin (keep under master)</option>'+(S.agents||[]).map(a=>`<option value="${a.id}">${a.name} (@${a.username||''}) · ${S.customers.filter(c=>c.createdBy===a.id).length}/${a.customerLimit||3}</option>`).join('');
+  $('add-modal').classList.remove('hidden');
+};
+$('n-name').oninput=e=>{const n=e.target.value.trim();if(n.length>=2)$('n-user').value=guser(n)};
+const closeA=()=>$('add-modal').classList.add('hidden');
+$('ax').onclick=closeA;$('a-cancel').onclick=closeA;
+$('add-form').onsubmit=async e=>{e.preventDefault();
+  const name=$('n-name').value.trim(),email=$('n-email').value.trim(),phone=$('n-phone').value.trim(),addr=$('n-addr').value.trim();
+  const bal=parseFloat($('n-bal').value)||0,username=$('n-user').value.trim().toLowerCase(),password=$('n-pass').value;
+  const fundNote=($('n-note').value||'').trim()||'Initial account funding';
+  const ts=toISOLocal($('n-date').value);
+  if(!name||!email||!username||!password){toast('Fill required fields','error');return}
+  if(S.customers.some(c=>(c.username||'').toLowerCase()===username)){toast('Username taken','error');return}
+  const assignTo=($('n-agent')&&$('n-agent').value)||'master';
+  if(assignTo!=='master'){
+    const ag=(S.agents||[]).find(a=>a.id===assignTo);
+    if(!ag){toast('Agent not found','error');return}
+    const nMine=S.customers.filter(c=>c.createdBy===ag.id).length;
+    if(nMine>=(ag.customerLimit||3)){toast('Agent customer limit reached ('+(ag.customerLimit||3)+')','error');return}
+  }
+  const c={id:gid('c'),accountNumber:gacc(),routingNumber:groute(),name,email,phone,address:addr,balance:Math.round(bal*100)/100,status:'active',restriction:null,joined:ts.slice(0,10),username,password,txPin:'2468',createdBy:assignTo};
+  S.customers.push(c);
+  if(bal>0){
+    S.transactions.unshift({id:gid('t'),customerId:c.id,accountNumber:c.accountNumber,customerName:name,type:'credit',amount:bal,balanceAfter:bal,note:fundNote,status:'completed',timestamp:ts});
+  }
+  await saveBin();closeA();toast('Created '+name+' · '+c.accountNumber);render();
+};
+
+
+/* ---- Agents (Master Admin only) ---- */
+$('btn-add-agent').onclick=()=>{
+  $('agent-form').reset();
+  $('ag-pass').value=gpwd();
+  $('ag-limit').value=3;
+  $('ag-bal').value=0;
+  const n=$('ag-name');
+  if(n) n.oninput=e=>{const v=e.target.value.trim();if(v.length>=2)$('ag-user').value=guser(v)};
+  $('agent-modal').classList.remove('hidden');
+};
+const closeAg=()=>$('agent-modal').classList.add('hidden');
+$('agx').onclick=closeAg;$('ag-cancel').onclick=closeAg;
+$('agent-form').onsubmit=async e=>{
+  e.preventDefault();
+  const name=$('ag-name').value.trim(),email=$('ag-email').value.trim(),phone=$('ag-phone').value.trim();
+  const limit=parseInt($('ag-limit').value,10)||3;
+  const bal=parseFloat($('ag-bal').value)||0;
+  const username=$('ag-user').value.trim().toLowerCase(),password=$('ag-pass').value;
+  const note=($('ag-note').value||'').trim()||'Initial agent funding';
+  if(!name||!email||!username||!password){toast('Fill required fields','error');return}
+  if((S.agents||[]).some(a=>(a.username||'').toLowerCase()===username)||S.customers.some(c=>(c.username||'').toLowerCase()===username)){
+    toast('Username taken','error');return;
+  }
+  const used=new Set((S.agents||[]).map(x=>x.color).filter(Boolean));let color=AGENT_PALETTE.find(c=>!used.has(c))||AGENT_PALETTE[(S.agents||[]).length%AGENT_PALETTE.length];
+  const refId='CLB-'+Math.random().toString(36).slice(2,8).toUpperCase();
+  const a={id:gid('ag'),name,email,phone,username,password,balance:Math.round(bal*100)/100,customerLimit:limit,status:'active',restriction:null,color,createdAt:new Date().toISOString(),createdBy:'master',referralId:refId,permissions:{createCustomers:true,fundCustomers:false,receiveMail:false,receiveChat:false,approveTransfers:false,approveChanges:false,freezeCustomers:false}};
+  S.agents=S.agents||[];
+  S.agents.push(a);
+  if(bal>0){
+    S.transactions.unshift({id:gid('t'),customerId:a.id,accountNumber:'AGENT',customerName:a.name,type:'credit',amount:bal,balanceAfter:a.balance,note:note,status:'completed',timestamp:new Date().toISOString(),meta:'agent_fund'});
+  }
+  await saveBin();closeAg();toast('Agent created · limit '+limit);render();
+};
+
+window.openAgent=id=>{
+  const a=(S.agents||[]).find(x=>x.id===id);if(!a)return;
+  S.curAgent=id;
+  $('ap-av').textContent=ini(a.name);$('ap-av').style.background=a.color||agentColor(a.id);$('ap-name').textContent=a.name;$('ap-user').textContent='@'+a.username;
+  $('ap-em').textContent=a.email||'—';$('ap-ph').textContent=a.phone||'—';
+  $('ap-bal').textContent=money(a.balance);
+  const nCust=S.customers.filter(c=>c.createdBy===a.id).length;
+  $('ap-cust').textContent=nCust+' / '+(a.customerLimit||3);
+  $('ap-lim').textContent=String(a.customerLimit||3);
+  $('ag-adj-limit').value=a.customerLimit||3;
+  $('ag-adj-amt').value='';$('ag-adj-note').value='';
+  const st=a.status==='suspended'?'Suspended':a.restriction?'Restricted':'Active';
+  $('ap-st').textContent=st;$('ap-st').className='st st-'+(a.status==='suspended'?'f':a.restriction?'r':'a');
+  $('agent-profile-modal').classList.remove('hidden');
+};
+const closeAp=()=>{$('agent-profile-modal').classList.add('hidden');S.curAgent=null};
+$('agpx').onclick=closeAp;$('ap-close').onclick=closeAp;
+$('agent-profile-modal').onclick=e=>{if(e.target.id==='agent-profile-modal')closeAp()};
+
+$('ag-adj-form').onsubmit=async e=>{
+  e.preventDefault();
+  const a=(S.agents||[]).find(x=>x.id===S.curAgent);if(!a)return;
+  const lim=parseInt($('ag-adj-limit').value,10);
+  if(lim&&lim>=1) a.customerLimit=lim;
+  const amt=parseFloat($('ag-adj-amt').value);
+  const type=$('ag-adj-type').value;
+  const note=($('ag-adj-note').value||'').trim();
+  if(amt&&amt>0){
+    if(type==='debit'&&amt>a.balance){toast('Insufficient agent funds','error');return}
+    a.balance=Math.round((a.balance+(type==='credit'?amt:-amt))*100)/100;
+    S.transactions.unshift({id:gid('t'),customerId:a.id,accountNumber:'AGENT',customerName:a.name,type,amount:amt,balanceAfter:a.balance,note:note||(type==='credit'?'Master credit to agent':'Master debit from agent'),status:'completed',timestamp:new Date().toISOString(),meta:'agent_fund'});
+  }
+  await saveBin();toast('Agent updated');openAgent(a.id);render();
+};
+$('btn-ag-suspend').onclick=async()=>{
+  const a=(S.agents||[]).find(x=>x.id===S.curAgent);if(!a)return;
+  a.status=a.status==='suspended'?'active':'suspended';
+  await saveBin();openAgent(a.id);toast(a.name+' is '+a.status);render();
+};
+$('btn-ag-restrict').onclick=async()=>{
+  const a=(S.agents||[]).find(x=>x.id===S.curAgent);if(!a)return;
+  a.restriction=a.restriction?null:'security';
+  await saveBin();openAgent(a.id);toast(a.restriction?'Restricted':'Unrestricted');render();
+};
+
+window.approveChange=async id=>{
+  const i=(S.pendingChanges||[]).findIndex(c=>c.id===id);if(i<0)return;
+  const ch=S.pendingChanges[i];
+  const cust=S.customers.find(c=>c.id===ch.customerId);
+  if(!cust){toast('Customer not found','error');return;}
+  if(ch.changeType==='credentials'){
+    if(ch.newUsername){
+      const taken=S.customers.some(c=>c.id!==cust.id&&(c.username||'').toLowerCase()===ch.newUsername.toLowerCase());
+      if(taken){toast('Username already taken','error');return;}
+      cust.username=ch.newUsername.toLowerCase();
+    }
+    if(ch.newPassword) cust.password=ch.newPassword;
+  } else if(ch.changeType==='txPin'){
+    if(ch.newTxPin) cust.txPin=String(ch.newTxPin);
+  }
+  ch.status='approved';
+  ch.resolvedAt=new Date().toISOString();
+  // Notify customer via mail
+  S.messages=S.messages||[];
+  S.messages.unshift({
+    id:gid('m'), fromType:'admin', fromId:'admin', fromName:'City Legacy Support',
+    toType:'customer', toId:cust.id, toName:cust.name, toAccount:cust.accountNumber,
+    subject:'Your account change request was approved',
+    body:'Hello '+cust.name+',\n\nYour request to update '+(ch.changeType==='txPin'?'your transaction PIN':'login credentials')+' has been approved and is now active.\n\nIf you did not request this change, contact support immediately.\n\n— City Legacy Bank',
+    timestamp:new Date().toISOString(), read:false
+  });
+  await saveBin();toast('Change approved for '+cust.name);render();
+};
+window.declineChange=async id=>{
+  if(!confirm('Decline this change request?'))return;
+  const i=(S.pendingChanges||[]).findIndex(c=>c.id===id);if(i<0)return;
+  const ch=S.pendingChanges[i];
+  const cust=S.customers.find(c=>c.id===ch.customerId);
+  ch.status='declined';
+  ch.resolvedAt=new Date().toISOString();
+  if(cust){
+    S.messages=S.messages||[];
+    S.messages.unshift({
+      id:gid('m'), fromType:'admin', fromId:'admin', fromName:'City Legacy Support',
+      toType:'customer', toId:cust.id, toName:cust.name, toAccount:cust.accountNumber,
+      subject:'Your account change request was declined',
+      body:'Hello '+cust.name+',\n\nYour request to update '+(ch.changeType==='txPin'?'your transaction PIN':'login credentials')+' was not approved. No changes were made to your account.\n\nContact support if you need assistance.\n\n— City Legacy Bank',
+      timestamp:new Date().toISOString(), read:false
+    });
+  }
+  await saveBin();toast('Change declined');render();
+};
+
+
+
+
+/* ===== AUTHORIZED (agent feature permissions) ===== */
+const PERM_KEYS = ['createCustomers','fundCustomers','receiveMail','receiveChat','approveTransfers','approveChanges','freezeCustomers'];
+function defaultPerms(){ return {createCustomers:true,fundCustomers:false,receiveMail:false,receiveChat:false,approveTransfers:false,approveChanges:false,freezeCustomers:false}; }
+function getPerms(a){
+  const p = Object.assign(defaultPerms(), (a && a.permissions) || {});
+  return p;
+}
+window.renderAuthorized = function(){
+  const sel = $('auth-agent-sel');
+  const tb = $('tb-auth');
+  if(sel){
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Select agent…</option>' + (S.agents||[]).map(a=>`<option value="${a.id}">${a.name} (@${a.username||''})</option>`).join('');
+    if(cur) sel.value = cur;
+  }
+  if(tb){
+    const list = S.agents||[];
+    if(!list.length) tb.innerHTML='<tr><td colspan="8"><div class="empty">No agents yet</div></td></tr>';
+    else tb.innerHTML = list.map(a=>{
+      const p = getPerms(a);
+      const cell = k => p[k] ? '<span class="st st-a">On</span>' : '<span class="st st-f">Off</span>';
+      return `<tr>
+        <td><strong>${a.name}</strong><div style="font-size:.75rem;color:var(--g500)">@${a.username||''}</div></td>
+        <td>${cell('createCustomers')}</td><td>${cell('fundCustomers')}</td>
+        <td>${cell('receiveMail')}</td><td>${cell('receiveChat')}</td>
+        <td>${cell('approveTransfers')}</td><td>${cell('approveChanges')}</td>
+        <td>${cell('freezeCustomers')}</td>
+      </tr>`;
+    }).join('');
+  }
+  if(sel && sel.value) loadAuthForm(sel.value);
+};
+function loadAuthForm(id){
+  const a = (S.agents||[]).find(x=>x.id===id);
+  const panel = $('auth-panel');
+  if(!a){ if(panel) panel.classList.add('hidden'); return; }
+  if(panel) panel.classList.remove('hidden');
+  const p = getPerms(a);
+  PERM_KEYS.forEach(k=>{
+    const el = $('perm-'+k);
+    if(el) el.checked = !!p[k];
+  });
+  const hint = $('auth-hint');
+  if(hint) hint.textContent = 'Editing permissions for '+a.name+' · customers under this agent: '+(S.customers||[]).filter(c=>c.createdBy===a.id).length;
+}
+if($('auth-agent-sel')) $('auth-agent-sel').onchange = function(){ loadAuthForm(this.value); };
+if($('auth-save')) $('auth-save').onclick = async function(){
+  const id = ($('auth-agent-sel')||{}).value;
+  const a = (S.agents||[]).find(x=>x.id===id);
+  if(!a){ toast('Select an agent','error'); return; }
+  const perms = defaultPerms();
+  PERM_KEYS.forEach(k=>{ const el=$('perm-'+k); perms[k]=el?!!el.checked:false; });
+  a.permissions = perms;
+  await saveBin();
+  toast('Authorization saved for '+a.name);
+  renderAuthorized();
+};
+
+
+/* ===== LOAN APPLICATIONS (admin approve/decline) ===== */
+window.renderLoans = function(){
+  S.loanApplications = S.loanApplications || [];
+  try{ renderLoanTransfers(); }catch(e){}
+  const pending = S.loanApplications.filter(l => !l.status || l.status==='pending' || l.status==='pending_review');
+  const hist = S.loanApplications.slice().sort((a,b)=>new Date(b.submittedAt||b.timestamp||0)-new Date(a.submittedAt||a.timestamp||0));
+  const tb = $('tb-loans');
+  const th = $('tb-loans-hist');
+  if(tb){
+    if(!pending.length) tb.innerHTML='<tr><td colspan="7"><div class="empty">No pending loan applications</div></td></tr>';
+    else tb.innerHTML = pending.map(l=>{
+      const when = fmt(l.submittedAt||l.timestamp);
+      const name = esc(l.name||l.customerName||'—');
+      const typ = esc(l.loanType||l.typeLabel||'Loan');
+      const amt = money(l.loanAmount||l.amount||0);
+      const inc = money(l.monthlyIncome||l.income||0);
+      const st = esc(l.status||'pending_review');
+      return `<tr>
+        <td>${when}</td>
+        <td><strong>${name}</strong><div style="font-size:.78rem;color:var(--g500)">${esc(l.email||'')} · ${esc(l.accountNumber||'')}</div></td>
+        <td>${typ}</td>
+        <td class="bal">${amt}</td>
+        <td>${inc}</td>
+        <td><span class="st st-p">${st}</span></td>
+        <td class="acts">
+          <button class="btn btn-g btn-sm" onclick="viewLoan('${l.id}')"><i class="fas fa-eye"></i></button>
+          <button class="btn btn-ok btn-sm" onclick="approveLoan('${l.id}')"><i class="fas fa-check"></i> Approve</button>
+          <button class="btn btn-bad btn-sm" onclick="declineLoan('${l.id}')"><i class="fas fa-times"></i> Decline</button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+  if(th){
+    if(!hist.length) th.innerHTML='<tr><td colspan="6"><div class="empty">No loan applications yet</div></td></tr>';
+    else th.innerHTML = hist.map(l=>{
+      const st = l.status||'pending_review';
+      const cls = st==='approved'?'st-a':(st==='declined'?'st-f':'st-p');
+      return `<tr>
+        <td>${fmt(l.submittedAt||l.timestamp)}</td>
+        <td>${esc(l.name||l.customerName||'—')}</td>
+        <td>${esc(l.loanType||l.typeLabel||'Loan')}</td>
+        <td>${money(l.loanAmount||l.amount||0)}</td>
+        <td><span class="st ${cls}">${esc(st)}</span></td>
+        <td>${esc(l.accountNumber||'—')}</td>
+      </tr>`;
+    }).join('');
+  }
+};
+
+
+window.renderLoanTransfers = function(){
+  S.pendingLoanTransfers = S.pendingLoanTransfers || [];
+  const tb = $('tb-loan-xfer');
+  if(!tb) return;
+  const pending = S.pendingLoanTransfers.filter(t => !t.status || t.status==='pending');
+  if(!pending.length){
+    tb.innerHTML='<tr><td colspan="6"><div class="empty">No pending loan transfers</div></td></tr>';
+  } else {
+    tb.innerHTML = pending.map(t=>`<tr>
+      <td>${fmt(t.timestamp)}</td>
+      <td><strong>${esc(t.name||'—')}</strong></td>
+      <td>${esc(t.accountNumber||'—')}</td>
+      <td class="bal">${money(t.amount||0)}</td>
+      <td><span class="st st-p">${esc(t.status||'pending')}</span></td>
+      <td class="acts">
+        <button class="btn btn-ok btn-sm" onclick="settleLoanTransfer('${t.id}')"><i class="fas fa-check"></i> Settle / Approve</button>
+        <button class="btn btn-bad btn-sm" onclick="rejectLoanTransfer('${t.id}')"><i class="fas fa-times"></i> Reject</button>
+      </td>
+    </tr>`).join('');
+  }
+};
+window.settleLoanTransfer = async function(id){
+  const t = (S.pendingLoanTransfers||[]).find(x=>x.id===id);
+  if(!t) return;
+  if(!confirm('Settle loan transfer of '+money(t.amount)+' to '+t.accountNumber+'?\\nThis moves pending funds into available balance.')) return;
+  const c = (S.customers||[]).find(x=>x.id===t.customerId || x.accountNumber===t.accountNumber);
+  if(!c){ toast('Customer not found','error'); return; }
+  const amt = t.amount||0;
+  c.pendingBalance = Math.max(0, Math.round(((c.pendingBalance||0)-amt)*100)/100);
+  c.balance = Math.round(((c.balance||0)+amt)*100)/100;
+  t.status = 'settled';
+  t.settledAt = new Date().toISOString();
+  const loan = (S.loanApplications||[]).find(x=>x.id===t.loanId);
+  if(loan){ loan.disbursementSettled = true; loan.disbursementStatus = 'settled'; }
+  (S.transactions||[]).forEach(tx=>{
+    if(tx.loanId===t.loanId && (tx.pending || tx.status==='pending') && tx.meta==='loan_disbursement'){
+      tx.status='completed'; tx.pending=false; tx.balanceAfter=c.balance;
+      tx.note='Loan disbursement · settled';
+    }
+  });
+  S.transactions = S.transactions || [];
+  S.transactions.unshift({
+    id:gid('t'), customerId:c.id, accountNumber:c.accountNumber, customerName:c.name,
+    type:'loan', amount:amt, balanceAfter:c.balance,
+    note:'Loan · '+(loan&&loan.loanType||'Loan')+' settled',
+    status:'completed', timestamp:new Date().toISOString(), meta:'loan_settled', loanId:t.loanId
+  });
+  S.messages = S.messages||[];
+  S.messages.unshift({
+    id:gid('m'), fromType:'admin', fromId:'admin', fromName:'City Legacy Support',
+    toType:'customer', toId:c.id, toName:c.name, toAccount:c.accountNumber,
+    loanId:t.loanId,
+    subject:'Loan funds available',
+    body:'Hello '+c.name+',\\n\\nYour loan transfer of '+money(amt)+' has been settled and is now available in your account.\\n\\n— City Legacy Bank',
+    timestamp:new Date().toISOString(), read:false, msgType:'loan_settled'
+  });
+  if(loan){
+    S.messages.unshift({
+      id:gid('m'), fromType:'admin', fromId:'admin', fromName:'City Legacy Support',
+      toType:'loan_applicant', toId:loan.id, toName:loan.name, loanId:loan.id,
+      subject:'Loan transfer settled',
+      body:'Hello '+(loan.name||'')+',\\n\\nYour loan transfer has been approved and settled to account '+c.accountNumber+'.\\n\\n— City Legacy Bank',
+      timestamp:new Date().toISOString(), read:false, msgType:'loan_settled'
+    });
+  }
+  await saveBin();
+  toast('Loan transfer settled');
+  renderLoanTransfers();
+  renderLoans();
+  badges();
+  render();
+};
+window.rejectLoanTransfer = async function(id){
+  const t = (S.pendingLoanTransfers||[]).find(x=>x.id===id);
+  if(!t) return;
+  if(!confirm('Reject this loan transfer? Pending balance will be cleared.')) return;
+  const c = (S.customers||[]).find(x=>x.id===t.customerId || x.accountNumber===t.accountNumber);
+  const amt = t.amount||0;
+  if(c){
+    c.pendingBalance = Math.max(0, Math.round(((c.pendingBalance||0)-amt)*100)/100);
+  }
+  t.status = 'rejected';
+  t.rejectedAt = new Date().toISOString();
+  const loan = (S.loanApplications||[]).find(x=>x.id===t.loanId);
+  if(loan){ loan.disbursementRequested = false; loan.disbursementStatus = 'rejected'; }
+  (S.transactions||[]).forEach(tx=>{
+    if(tx.loanId===t.loanId && (tx.pending || tx.status==='pending') && tx.meta==='loan_disbursement'){
+      tx.status='declined'; tx.pending=false; tx.note='Loan disbursement · rejected by admin';
+    }
+  });
+  await saveBin();
+  toast('Loan transfer rejected');
+  renderLoanTransfers();
+  renderLoans();
+  badges();
+};
+window.viewLoan = function(id){
+  const l = (S.loanApplications||[]).find(x=>x.id===id);
+  if(!l) return;
+  const extra = l.extra ? JSON.stringify(l.extra, null, 2) : '';
+  alert(
+    'Loan application\n\n' +
+    'Name: ' + (l.name||l.customerName||'') + '\n' +
+    'Email: ' + (l.email||'') + '\n' +
+    'Phone: ' + (l.phone||'') + '\n' +
+    'Account: ' + (l.accountNumber||'') + '\n' +
+    'Type: ' + (l.loanType||l.typeLabel||'') + '\n' +
+    'Amount: ' + money(l.loanAmount||l.amount||0) + '\n' +
+    'Income: ' + money(l.monthlyIncome||l.income||0) + '\n' +
+    'Purpose: ' + (l.purpose||'') + '\n' +
+    'Address: ' + (l.address||'') + '\n' +
+    'Status: ' + (l.status||'') + '\n' +
+    (extra ? '\nExtra:\n' + extra : '')
+  );
+};
+
+window.approveLoan = async function(id){
+  const l = (S.loanApplications||[]).find(x=>x.id===id);
+  if(!l) return;
+  const amt = l.loanAmount||l.amount||0;
+  if(!confirm('Approve this loan for ' + (l.name||l.customerName||'applicant') + ' · ' + money(amt) + '?\n\nThis generates a City Legacy bank account for disbursement. The applicant will see account details in the loan portal.')) return;
+  l.status = 'approved';
+  l.resolvedAt = new Date().toISOString();
+  l.resolvedBy = 'master';
+  l.approvedAmount = amt;
+
+  // Create bank account credentials for disbursement (if not already linked)
+  let c = (S.customers||[]).find(x=>x.id===l.customerId || (x.email&&l.email&&x.email.toLowerCase()===l.email.toLowerCase()));
+  const now = new Date().toISOString();
+  if(!c){
+    const base = (l.name||'user').trim().toLowerCase().replace(/[^a-z0-9]+/g,'.').replace(/^\.+|\.+$/g,'').slice(0,18) || ('user'+Date.now().toString(36).slice(-6));
+    let username = base;
+    let n=0;
+    while((S.customers||[]).some(x=>(x.username||'').toLowerCase()===username) || (S.agents||[]).some(a=>(a.username||'').toLowerCase()===username)){
+      n++; username = base+n; if(n>80) break;
+    }
+    const password = gpwd();
+    c = {
+      id: gid('c'),
+      accountNumber: gacc(),
+      routingNumber: groute(),
+      name: l.name||l.customerName||'Customer',
+      email: l.email||'',
+      phone: l.phone||'',
+      address: l.address||'',
+      balance: 0,
+      pendingBalance: 0,
+      status: 'active',
+      restriction: null,
+      tier: 'tier1',
+      accountType: 'Checking',
+      joined: now.slice(0,10),
+      username,
+      password,
+      txPin: '2468',
+      createdAt: now,
+      source: 'loan_approval',
+      profilePic: null
+    };
+    S.customers.push(c);
+  } else {
+    if(c.restriction==='compliance'){ c.restriction=null; c.restrictionReason=''; }
+  }
+  l.customerId = c.id;
+  l.bankAccountNumber = c.accountNumber;
+  l.bankRoutingNumber = c.routingNumber;
+  l.bankUsername = c.username;
+  l.bankPassword = c.password;
+  l.accountNumber = c.accountNumber;
+  l.routingNumber = c.routingNumber;
+  l.username = c.username;
+  l.password = c.password;
+
+  S.messages = S.messages || [];
+  S.messages.unshift({
+    id: gid('m'),
+    fromType:'admin', fromId:'admin', fromName:'City Legacy Support',
+    toType:'loan_applicant', toId:l.id, toName:l.name,
+    loanId: l.id, customerId: c.id,
+    subject: 'Loan approved · ' + (l.loanType||'Loan'),
+    body: 'Hello '+(l.name||'')+',\n\nYour loan application ('+(l.loanType||'Loan')+' · '+money(amt)+') has been APPROVED.\n\nBank account for disbursement:\nAccount: '+c.accountNumber+'\nRouting: '+c.routingNumber+'\nUsername: '+c.username+'\nPassword: '+c.password+'\n\nCopy or write down these details. Sign in to the loan portal → Transfer loan to your bank account. Funds will show as pending until settlement.\nYou can also sign in to main online banking with the username and password above.\n\n— City Legacy Bank',
+    timestamp: now,
+    read: false,
+    msgType: 'loan_decision'
+  });
+  S.messages.unshift({
+    id: gid('m'),
+    fromType:'admin', fromId:'admin', fromName:'City Legacy Support',
+    toType:'customer', toId:c.id, toName:c.name, toAccount:c.accountNumber,
+    loanId: l.id,
+    subject: 'Your City Legacy account is ready',
+    body: 'Hello '+c.name+',\n\nYour City Legacy checking account is ready for loan disbursement.\nAccount: '+c.accountNumber+'\nRouting: '+c.routingNumber+'\n\n— City Legacy Bank',
+    timestamp: now,
+    read: false,
+    msgType: 'loan_account'
+  });
+
+  if(l.email){
+    S.pendingSignups = (S.pendingSignups||[]).filter(s => (s.email||'').toLowerCase() !== (l.email||'').toLowerCase());
+  }
+  await saveBin();
+  toast('Loan approved · bank account generated');
+  renderLoans();
+  badges();
+  render();
+};
+
+window.declineLoan = async function(id){
+  const l = (S.loanApplications||[]).find(x=>x.id===id);
+  if(!l) return;
+  if(!confirm('Decline this loan application?')) return;
+  l.status = 'declined';
+  l.resolvedAt = new Date().toISOString();
+  l.resolvedBy = 'master';
+  // Also mark rejected alias for UI
+  l.rejectedAt = l.resolvedAt;
+  const c = (S.customers||[]).find(x=>x.id===l.customerId || x.accountNumber===l.accountNumber || (x.email&&l.email&&x.email.toLowerCase()===l.email.toLowerCase()));
+  if(c){
+    S.messages = S.messages || [];
+    S.messages.unshift({
+      id: gid('m'),
+      fromType:'admin', fromId:'admin', fromName:'City Legacy Support',
+      toType:'loan_applicant', toId:l.id, toName:l.name, loanId:l.id,
+      subject: 'Loan application update · ' + (l.loanType||'Loan'),
+      body: 'Hello '+c.name+',\n\nAfter review, we are unable to approve your loan application ('+(l.loanType||'Loan')+' · '+money(l.loanAmount||l.amount||0)+') at this time.\n\nYou may sign in to online banking or contact support for more information.\n\n— City Legacy Bank',
+      timestamp: new Date().toISOString(),
+      read: false,
+      msgType: 'loan_decision'
+    });
+  }
+  await saveBin();
+  toast('Loan declined');
+  renderLoans();
+  badges();
+  render();
+};
+
+/* extend badges for loans */
+(function(){
+  const prev = window.badges;
+  window.badges = function(){
+    if(typeof prev === 'function') try{ prev(); }catch(e){}
+    const n = (S.loanApplications||[]).filter(l => !l.status || l.status==='pending' || l.status==='pending_review').length;
+    const el = $('b-loan');
+    if(el){ if(n){ el.textContent=String(n); el.classList.remove('hidden'); } else el.classList.add('hidden'); }
+    // overview stat if present
+    const so = $('s-loan');
+    if(so) so.textContent = String(n);
+  };
+})();
+
+
+/* ===== CHAT / FILES / WALLET / RESTRICTIONS ===== */
+S.chatWith = S.chatWith || null;
+S.restrictTab = S.restrictTab || 'all';
+S.restrictTarget = null;
+S.walletReplyId = null;
+
+function ensureChatStore(){
+  S.chats = S.chats || [];
+  S.walletRequests = S.walletRequests || [];
+}
+
+function chatThreads(){
+  ensureChatStore();
+  const map = {};
+  (S.chats||[]).forEach(m=>{
+    const cid = m.customerId;
+    if(!cid) return;
+    if(!map[cid]) map[cid] = { customerId:cid, messages:[], lastAt:m.timestamp, unread:0 };
+    map[cid].messages.push(m);
+    if(new Date(m.timestamp) > new Date(map[cid].lastAt||0)) map[cid].lastAt = m.timestamp;
+    if(m.fromType==='customer' && !m.readByAdmin) map[cid].unread++;
+  });
+  // Also surface customers who messaged via support mail as chat starters
+  return Object.values(map).sort((a,b)=>new Date(b.lastAt)-new Date(a.lastAt));
+}
+
+window.renderChat = function(){
+  ensureChatStore();
+  const list = $('chatList');
+  if(!list) return;
+  const threads = chatThreads();
+  // Include all customers for starting chat
+  const byId = {};
+  threads.forEach(th=>{ byId[th.customerId]=th; });
+  const rows = (S.customers||[]).map(c=>{
+    const th = byId[c.id] || { customerId:c.id, messages:[], lastAt:null, unread:0 };
+    const last = th.messages.length ? th.messages[th.messages.length-1] : null;
+    return { c, th, last };
+  }).sort((a,b)=>{
+    const ta = a.th.lastAt ? new Date(a.th.lastAt).getTime() : 0;
+    const tb = b.th.lastAt ? new Date(b.th.lastAt).getTime() : 0;
+    return tb - ta;
+  });
+  if(!rows.length){ list.innerHTML='<div class="empty">No customers</div>'; return; }
+  list.innerHTML = rows.map(({c,th,last})=>{
+    const on = S.chatWith===c.id ? ' on' : '';
+    const prev = last ? (last.body||'').slice(0,40) : 'No messages yet';
+    const badge = th.unread ? `<span class="cbadge">${th.unread}</span>` : '';
+    return `<div class="chat-list-item${on}" onclick="openChat('${c.id}')">
+      <div class="cav">${ini(c.name)}</div>
+      <div class="cmeta"><div class="cname">${esc(c.name)} ${badge}</div>
+      <div class="cprev">${esc(prev)}</div></div></div>`;
+  }).join('');
+  if(S.chatWith) openChat(S.chatWith, true);
+};
+
+window.openChat = async function(customerId, skipList){
+  ensureChatStore();
+  S.chatWith = customerId;
+  const c = (S.customers||[]).find(x=>x.id===customerId);
+  if(!c) return;
+  // mark customer messages read by admin
+  let changed=false;
+  (S.chats||[]).forEach(m=>{
+    if(m.customerId===customerId && m.fromType==='customer' && !m.readByAdmin){ m.readByAdmin=true; changed=true; }
+  });
+  if(changed) try{ await saveBin(); }catch(e){}
+  if(!skipList) renderChat();
+  const h = $('chatThreadH');
+  if(h) h.innerHTML = `<div class="cav" style="width:36px;height:36px;border-radius:50%;background:var(--pl);color:var(--p);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem">${ini(c.name)}</div>
+    <div><div style="font-weight:700">${esc(c.name)}</div><div style="font-size:.75rem;color:var(--g500)">${esc(c.accountNumber||'')} · ${esc(c.email||'')}</div></div>`;
+  const msgs = (S.chats||[]).filter(m=>m.customerId===customerId).sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+  const box = $('chatMsgs');
+  if(box){
+    if(!msgs.length) box.innerHTML='<div class="empty">Start the conversation</div>';
+    else box.innerHTML = msgs.map(m=>{
+      const me = m.fromType==='admin';
+      return `<div class="chat-bubble ${me?'me':'them'}">${esc(m.body||'')}<div class="ctime">${fmt(m.timestamp)}</div></div>`;
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  }
+  const comp = $('chatCompose');
+  if(comp) comp.classList.remove('hidden');
+};
+
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+async function sendChatMsg(){
+  ensureChatStore();
+  if(!S.chatWith) return;
+  const c = (S.customers||[]).find(x=>x.id===S.chatWith);
+  if(!c) return;
+  const input = $('chatInput');
+  const body = (input && input.value || '').trim();
+  if(!body) return;
+  S.chats.push({
+    id: gid('ch'),
+    customerId: c.id,
+    customerName: c.name,
+    accountNumber: c.accountNumber,
+    fromType: 'admin',
+    fromName: 'City Legacy Support',
+    body,
+    timestamp: new Date().toISOString(),
+    readByAdmin: true,
+    readByCustomer: false
+  });
+  // Mirror into messages mailbox so customer sees it if they check mail
+  S.messages = S.messages || [];
+  S.messages.unshift({
+    id: gid('m'),
+    fromType: 'admin', fromId: 'admin', fromName: 'City Legacy Support',
+    toType: 'customer', toId: c.id, toName: c.name, toAccount: c.accountNumber,
+    subject: 'Chat message',
+    body,
+    timestamp: new Date().toISOString(),
+    read: false,
+    msgType: 'chat'
+  });
+  if(input) input.value='';
+  await saveBin();
+  openChat(c.id);
+  toast('Message sent');
+  badges();
+}
+
+if($('chatSend')) $('chatSend').onclick = sendChatMsg;
+if($('chatInput')) $('chatInput').addEventListener('keydown', function(e){
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendChatMsg(); }
+});
+
+window.renderFiles = function(){
+  const el = $('filesList');
+  if(!el) return;
+  const q = (($('files-q')&&$('files-q').value)||'').trim().toLowerCase();
+  let list = (S.customers||[]).slice().sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+  if(q) list = list.filter(c=> (c.name||'').toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q) || (c.accountNumber||'').toLowerCase().includes(q) || (c.username||'').toLowerCase().includes(q));
+  if(!list.length){ el.innerHTML='<div class="empty">No matching customers</div>'; return; }
+  el.innerHTML = list.map(c=>{
+    const st = c.status==='frozen' ? 'Frozen' : (c.restriction ? 'Restricted' : 'Active');
+    const stCls = c.status==='frozen' ? 'st-f' : (c.restriction ? 'st-r' : 'st-a');
+    const docs = c.documents || c.files || [];
+    const docsHtml = docs.length
+      ? docs.map(d=>`<div class="file-field"><label>${esc(d.label||d.name||'Document')}</label><div>${d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.name||d.url)}</a>`:esc(d.name||d.value||'—')}</div></div>`).join('')
+      : '<div style="font-size:.85rem;color:var(--g500);margin-top:8px">No uploaded documents on file. Profile data below for verification.</div>';
+    const fav = c.profilePic
+      ? `<img class="av" src="${c.profilePic}" alt="" style="object-fit:cover;padding:0;width:34px;height:34px;border-radius:50%"/>`
+      : `<div class="av">${ini(c.name)}</div>`;
+    return `<div class="file-cust" id="file-${c.id}">
+      <div class="file-cust-h" onclick="this.parentElement.classList.toggle('open')">
+        ${fav}
+        <div style="flex:1;min-width:0">
+          <div>${esc(c.name)}</div>
+          <div style="font-size:.78rem;font-weight:500;color:var(--g500)">${esc(c.accountNumber||'')} · ${esc(c.email||'')}</div>
+        </div>
+        <span class="st ${stCls}">${st}</span>
+        <i class="fas fa-chevron-down" style="color:var(--g400)"></i>
+      </div>
+      <div class="file-cust-b">
+        <div class="file-grid">
+          <div class="file-field"><label>Full name</label><div>${esc(c.name)}</div></div>
+          <div class="file-field"><label>Username</label><div>${esc(c.username||'—')}</div></div>
+          <div class="file-field"><label>Email</label><div>${esc(c.email||'—')}</div></div>
+          <div class="file-field"><label>Phone</label><div>${esc(c.phone||'—')}</div></div>
+          <div class="file-field"><label>Account number</label><div>${esc(c.accountNumber||'—')}</div></div>
+          <div class="file-field"><label>Routing number</label><div>${esc(c.routingNumber||'—')}</div></div>
+          <div class="file-field"><label>Address</label><div>${esc(c.address||'—')}</div></div>
+          <div class="file-field"><label>Joined</label><div>${esc(c.joined||c.createdAt||'—')}</div></div>
+          <div class="file-field"><label>Balance</label><div class="bal">${money(c.balance)}</div></div>
+          <div class="file-field"><label>Status</label><div><span class="st ${stCls}">${st}</span></div></div>
+          <div class="file-field"><label>Restriction reason</label><div>${esc(c.restrictionReason||c.freezeReason||'—')}</div></div>
+          <div class="file-field"><label>Created by</label><div>${esc((!c.createdBy||c.createdBy==='master')?'Master Admin':((S.agents||[]).find(a=>a.id===c.createdBy)||{}).name||c.createdBy)}</div></div>
+          <div class="file-field"><label>Source</label><div>${esc(c.source||'—')}</div></div>
+          <div class="file-field"><label>Account type</label><div>${esc(c.accountType||'Checking')}</div></div>
+        </div>
+        <div style="margin-top:14px"><strong style="font-size:.85rem">Documents</strong>${docsHtml}</div>
+        <div style="margin-top:12px" class="acts">
+          <button type="button" class="btn btn-p btn-sm" onclick="openC('${c.id}')"><i class="fas fa-user"></i> Open profile</button>
+          <button type="button" class="btn btn-warn btn-sm" onclick="openRestrictEditor('customer','${c.id}')"><i class="fas fa-ban"></i> Restriction</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.renderWallet = function(){
+  ensureChatStore();
+  const el = $('walletList');
+  if(!el) return;
+  const list = (S.walletRequests||[]).slice().sort((a,b)=>new Date(b.timestamp||0)-new Date(a.timestamp||0));
+  if(!list.length){ el.innerHTML='<div class="empty">No wallet address requests</div>'; return; }
+  el.innerHTML = list.map(w=>{
+    const c = (S.customers||[]).find(x=>x.id===w.customerId);
+    const name = w.customerName || (c&&c.name) || 'Customer';
+    const st = w.status || 'pending';
+    const stCls = st==='replied'?'st-a':(st==='closed'?'st-f':'st-p');
+    const agentId = w.assignedAgentId || w.agentId || (c && c.createdBy && c.createdBy!=='master' ? c.createdBy : null);
+    const ag = agentId ? (S.agents||[]).find(a=>a.id===agentId) : null;
+    const routeHtml = ag
+      ? `<span class="route-tag" title="Visible on agent dashboard"><i class="fas fa-user-tie"></i> Routed to agent: ${esc(ag.name||ag.username)}</span>`
+      : `<span class="agent-tag"><i class="fas fa-university"></i> Master Admin</span>`;
+    return `<div class="wallet-row">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+        <div><strong>${esc(name)}</strong> <span style="color:var(--g500);font-size:.85rem">${esc(w.accountNumber|| (c&&c.accountNumber) ||'')}</span></div>
+        <span class="st ${stCls}">${esc(st)}</span>
+      </div>
+      <div style="margin-bottom:8px">${routeHtml}</div>
+      <div style="font-size:.85rem;color:var(--g600);margin-bottom:4px"><strong>Network:</strong> ${esc(w.network||w.chain||'—')} · <strong>Asset:</strong> ${esc(w.asset||w.coin||'—')}</div>
+      <div style="font-size:.9rem;margin-bottom:8px">${esc(w.note||w.message||'Requested a crypto wallet address')}</div>
+      <div style="font-size:.75rem;color:var(--g400);margin-bottom:10px">${fmt(w.timestamp)}</div>
+      <div class="acts">
+        <button type="button" class="btn btn-p btn-sm" onclick="openWalletReply('${w.id}')"><i class="fas fa-reply"></i> Reply to mail</button>
+        <button type="button" class="btn btn-g btn-sm" onclick="closeWalletReq('${w.id}')">Mark closed</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.openWalletReply = function(id){
+  ensureChatStore();
+  const w = (S.walletRequests||[]).find(x=>x.id===id);
+  if(!w) return;
+  S.walletReplyId = id;
+  const c = (S.customers||[]).find(x=>x.id===w.customerId);
+  $('wr-who').textContent = (w.customerName|| (c&&c.name) ||'Customer') + ' · ' + (w.accountNumber|| (c&&c.accountNumber) ||'');
+  $('wr-subj').value = 'Your crypto wallet address request';
+  $('wr-body').value = '';
+  $('wr-addr').value = w.addressProvided || '';
+  $('wallet-reply-modal').classList.remove('hidden');
+};
+
+window.closeWalletReq = async function(id){
+  ensureChatStore();
+  const w = (S.walletRequests||[]).find(x=>x.id===id);
+  if(!w) return;
+  w.status = 'closed';
+  await saveBin();
+  toast('Request closed');
+  renderWallet();
+  badges();
+};
+
+async function sendWalletReply(){
+  ensureChatStore();
+  const w = (S.walletRequests||[]).find(x=>x.id===S.walletReplyId);
+  if(!w) return;
+  const c = (S.customers||[]).find(x=>x.id===w.customerId);
+  if(!c){ toast('Customer not found','error'); return; }
+  const subj = ($('wr-subj').value||'').trim() || 'Your crypto wallet address request';
+  let body = ($('wr-body').value||'').trim();
+  const addr = ($('wr-addr').value||'').trim();
+  if(addr) body = (body ? body + '\n\n' : '') + 'Wallet address: ' + addr;
+  if(!body){ toast('Write a message','error'); return; }
+  S.messages = S.messages || [];
+  S.messages.unshift({
+    id: gid('m'),
+    fromType: 'admin', fromId: 'admin', fromName: 'City Legacy Support',
+    toType: 'customer', toId: c.id, toName: c.name, toAccount: c.accountNumber,
+    subject: subj,
+    body,
+    timestamp: new Date().toISOString(),
+    read: false,
+    msgType: 'wallet_reply'
+  });
+  w.status = 'replied';
+  w.addressProvided = addr || w.addressProvided;
+  w.repliedAt = new Date().toISOString();
+  $('wallet-reply-modal').classList.add('hidden');
+  await saveBin();
+  toast('Reply sent to customer mail');
+  renderWallet();
+  badges();
+}
+if($('wr-send')) $('wr-send').onclick = sendWalletReply;
+if($('wr-x')) $('wr-x').onclick = ()=>$('wallet-reply-modal').classList.add('hidden');
+if($('wr-cancel')) $('wr-cancel').onclick = ()=>$('wallet-reply-modal').classList.add('hidden');
+
+window.restrictTab = function(tab){
+  S.restrictTab = tab;
+  ['All','Cust','Ag'].forEach((k,i)=>{
+    const id = ['restTabAll','restTabCust','restTabAg'][i];
+    const el = $(id);
+    if(el) el.classList.toggle('on', (tab==='all'&&i===0)||(tab==='customers'&&i===1)||(tab==='agents'&&i===2));
+  });
+  renderRestrictions();
+};
+
+window.renderRestrictions = function(){
+  const el = $('restrictList');
+  if(!el) return;
+  const tab = S.restrictTab || 'all';
+  const rows = [];
+  if(tab==='all'||tab==='customers'){
+    (S.customers||[]).forEach(c=>{
+      if(c.status==='frozen' || c.restriction){
+        rows.push({ kind:'customer', id:c.id, name:c.name, meta:c.accountNumber, status: c.status==='frozen'?'Frozen':('Restricted'+(c.restriction&&c.restriction!==true?': '+c.restriction:'')), reason: c.restrictionReason||c.freezeReason||'', raw:c });
+      }
+    });
+  }
+  if(tab==='all'||tab==='agents'){
+    (S.agents||[]).forEach(a=>{
+      if(a.status==='suspended' || a.restriction){
+        rows.push({ kind:'agent', id:a.id, name:a.name, meta:'@'+(a.username||''), status: a.status==='suspended'?'Suspended':('Restricted'+(a.restriction&&a.restriction!==true?': '+a.restriction:'')), reason: a.restrictionReason||'', raw:a });
+      }
+    });
+  }
+  if(!rows.length){ el.innerHTML='<div class="empty">No restricted, frozen, or suspended accounts</div>'; return; }
+  el.innerHTML = rows.map(r=>{
+    const cls = r.status.indexOf('Frozen')>=0||r.status.indexOf('Suspended')>=0 ? 'st-f' : 'st-r';
+    return `<div class="restrict-row">
+      <div style="min-width:0;flex:1">
+        <div style="font-weight:700">${esc(r.name)} <span style="font-weight:500;color:var(--g500);font-size:.85rem">${esc(r.meta||'')} · ${r.kind}</span></div>
+        <div style="margin-top:4px"><span class="st ${cls}">${esc(r.status)}</span></div>
+        <div style="font-size:.85rem;color:var(--g600);margin-top:6px"><strong>Reason:</strong> ${esc(r.reason||'No reason on file')}</div>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn btn-warn btn-sm" onclick="openRestrictEditor('${r.kind}','${r.id}')"><i class="fas fa-edit"></i> Edit / reason</button>
+        <button type="button" class="btn btn-ok btn-sm" onclick="relievePenalty('${r.kind}','${r.id}')"><i class="fas fa-check"></i> Relieve</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.openRestrictEditor = function(kind, id){
+  S.restrictTarget = { kind, id };
+  let name='Account', reason='', type='restriction';
+  if(kind==='customer'){
+    const c=(S.customers||[]).find(x=>x.id===id);
+    if(!c) return;
+    name = c.name + ' · ' + (c.accountNumber||'');
+    reason = c.restrictionReason || c.freezeReason || '';
+    type = c.status==='frozen' ? 'frozen' : 'restriction';
+  } else {
+    const a=(S.agents||[]).find(x=>x.id===id);
+    if(!a) return;
+    name = a.name + ' · @' + (a.username||'');
+    reason = a.restrictionReason || '';
+    type = a.status==='suspended' ? 'suspended' : 'restriction';
+  }
+  $('rm-title').textContent = 'Restriction / penalty';
+  $('rm-who').textContent = name;
+  $('rm-type').value = type;
+  $('rm-reason').value = reason;
+  $('restrict-modal').classList.remove('hidden');
+};
+
+
+
+async function applyRestrictReason(){
+  if(!S.restrictTarget){ toast('No account selected','error'); return; }
+  const { kind, id } = S.restrictTarget;
+  const typeEl = $('rm-type');
+  const reasonEl = $('rm-reason');
+  const type = typeEl ? typeEl.value : 'restriction';
+  const reason = reasonEl ? (reasonEl.value||'').trim() : '';
+  if(!reason){
+    toast('Enter a reason shown to the customer / agent','error');
+    if(reasonEl) reasonEl.focus();
+    return;
+  }
+  if(kind==='customer'){
+    const c=(S.customers||[]).find(x=>x.id===id); if(!c){ toast('Customer not found','error'); return; }
+    if(type==='frozen'){
+      c.status = 'frozen';
+      c.freezeReason = reason;
+      c.restrictionReason = reason;
+    } else {
+      // Restricted (not frozen) — clear freeze if any
+      if(c.status==='frozen') c.status = 'active';
+      c.restriction = 'security';
+      c.restrictionReason = reason;
+      c.freezeReason = '';
+    }
+  } else {
+    const a=(S.agents||[]).find(x=>x.id===id); if(!a){ toast('Agent not found','error'); return; }
+    if(type==='suspended'){
+      a.status = 'suspended';
+      a.restrictionReason = reason;
+    } else {
+      if(a.status==='suspended') a.status = 'active';
+      a.restriction = 'security';
+      a.restrictionReason = reason;
+    }
+  }
+  const modal = $('restrict-modal');
+  if(modal) modal.classList.add('hidden');
+  await saveBin();
+  toast('Restriction applied');
+  try{ renderRestrictions(); }catch(e){}
+  try{ badges(); }catch(e){}
+  try{ render(); }catch(e){}
+  // refresh open profile if same customer
+  if(kind==='customer' && S.cur===id) try{ openC(id); }catch(e){}
+  if(kind==='agent' && S.curAgent===id) try{ openAgent(id); }catch(e){}
+}
+window.applyRestrictReason = applyRestrictReason;
+
+window.relievePenalty = async function(kind, id){
+  if(!kind || !id) return;
+  if(kind==='customer'){
+    const c=(S.customers||[]).find(x=>x.id===id); if(!c){ toast('Customer not found','error'); return; }
+    c.status = 'active';
+    c.restriction = null;
+    c.restrictionReason = '';
+    c.freezeReason = '';
+  } else {
+    const a=(S.agents||[]).find(x=>x.id===id); if(!a){ toast('Agent not found','error'); return; }
+    a.status = 'active';
+    a.restriction = null;
+    a.restrictionReason = '';
+  }
+  await saveBin();
+  toast('Penalty relieved');
+  try{ renderRestrictions(); }catch(e){}
+  try{ badges(); }catch(e){}
+  try{ render(); }catch(e){}
+  if(kind==='customer' && S.cur===id) try{ openC(id); }catch(e){}
+  if(kind==='agent' && S.curAgent===id) try{ openAgent(id); }catch(e){}
+};
+
+function bindRestrictModalButtons(){
+  const save = $('rm-save');
+  const relieve = $('rm-relieve');
+  const x = $('rm-x');
+  const cancel = $('rm-cancel');
+  if(save) save.onclick = function(e){ e.preventDefault(); applyRestrictReason(); };
+  if(relieve) relieve.onclick = async function(e){
+    e.preventDefault();
+    if(!S.restrictTarget){ toast('No account selected','error'); return; }
+    await relievePenalty(S.restrictTarget.kind, S.restrictTarget.id);
+    const modal = $('restrict-modal');
+    if(modal) modal.classList.add('hidden');
+  };
+  if(x) x.onclick = function(){ const m=$('restrict-modal'); if(m) m.classList.add('hidden'); };
+  if(cancel) cancel.onclick = function(){ const m=$('restrict-modal'); if(m) m.classList.add('hidden'); };
+}
+// Bind now if elements exist; also after DOM ready
+bindRestrictModalButtons();
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bindRestrictModalButtons);
+else setTimeout(bindRestrictModalButtons, 0);
+
+/* Patch badges for new counters */
+const _badgesOrig = typeof badges === 'function' ? badges : null;
+window.badges = function(){
+  if(_badgesOrig) try{ _badgesOrig(); }catch(e){}
+  ensureChatStore();
+  const chatUnread = (S.chats||[]).filter(m=>m.fromType==='customer'&&!m.readByAdmin).length;
+  const bc=$('b-chat'); if(bc){ if(chatUnread){bc.textContent=String(chatUnread);bc.classList.remove('hidden');} else bc.classList.add('hidden'); }
+  const wp = (S.walletRequests||[]).filter(w=>(w.status||'pending')==='pending').length;
+  const bw=$('b-w'); if(bw){ if(wp){bw.textContent=String(wp);bw.classList.remove('hidden');} else bw.classList.add('hidden'); }
+  const rc = (S.customers||[]).filter(c=>c.status==='frozen'||c.restriction).length + (S.agents||[]).filter(a=>a.status==='suspended'||a.restriction).length;
+  const br=$('b-r'); if(br){ if(rc){br.textContent=String(rc);br.classList.remove('hidden');} else br.classList.add('hidden'); }
+};
+
+
+
+/* ===== Investment wallets (admin) ===== */
+function ensureInvCust(c){
+  if(!c.investments) c.investments={cash:0,locked:0,positions:[],history:[],walletId:'',restricted:false,signedUp:false};
+  if(typeof c.investments.cash!=='number') c.investments.cash=0;
+  if(typeof c.investments.locked!=='number') c.investments.locked=0;
+  if(!Array.isArray(c.investments.positions)) c.investments.positions=[];
+  if(!Array.isArray(c.investments.history)) c.investments.history=[];
+  if(!c.investments.walletId){
+    const digits=String(Math.floor(100+Math.random()*900));
+    const letters=Array.from({length:3},()=>String.fromCharCode(65+Math.floor(Math.random()*26))).join('');
+    c.investments.walletId=digits+letters;
+  }
+  return c.investments;
+}
+
+window.renderInvWallets=function(){
+  const el=$('invWalletList');
+  if(!el) return;
+  // ensure engines UI
+  try{
+    const cfg=S.investmentConfig||{};
+    ['CLB','MTG-CLB'].forEach(sym=>{
+      const e=cfg[sym]||{mode:'pause',ratePercent:0,intervalMs:480000};
+      const mid=$('invEng-'+sym+'-mode');
+      const rid=$('invEng-'+sym+'-rate');
+      const iid=$('invEng-'+sym+'-interval');
+      const st=$('invEng-'+sym+'-status');
+      if(mid) mid.value=e.mode||'pause';
+      if(rid) rid.value=e.ratePercent!=null?e.ratePercent:'';
+      if(iid) iid.value=String(e.intervalMs||480000);
+      if(st) st.textContent='Mode: '+(e.mode||'pause')+' · '+(e.ratePercent||0)+'% / '+(Math.round((e.intervalMs||0)/1000))+'s';
+    });
+  }catch(e){}
+  const list=(S.customers||[]).filter(c=>c.investments && (c.investments.signedUp || c.investments.cash>0 || (c.investments.positions&&c.investments.positions.length) || c.investments.walletId));
+  // also show any with investments object
+  const all=(S.customers||[]).filter(c=>{
+    if(!c.investments) return false;
+    ensureInvCust(c);
+    return true;
+  });
+  const rows=all.length?all:list;
+  if(!rows.length){ el.innerHTML='<div class="empty">No customers have opened an investment wallet yet</div>'; return; }
+  el.innerHTML=rows.map(c=>{
+    const inv=ensureInvCust(c);
+    const avail=Math.max(0,(inv.cash||0));
+    const locked=inv.locked||0;
+    const rest=inv.restricted?'Restricted':'Open';
+    const restCls=inv.restricted?'st-r':'st-a';
+    return `<div class="wallet-row" style="border:1px solid var(--g200);border-radius:12px;margin-bottom:12px;padding:14px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <div><strong>${esc(c.name||'Customer')}</strong>
+          <div style="font-size:.82rem;color:var(--g500)">${esc(c.accountNumber||'')} · Wallet ID <span style="font-family:monospace;font-weight:700;color:var(--p)">${esc(inv.walletId)}</span></div>
+        </div>
+        <span class="st ${restCls}">${rest}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;font-size:.88rem">
+        <div>Available <div class="bal">${money(avail)}</div></div>
+        <div>Locked <div style="font-weight:700;color:var(--bad)">${money(locked)}</div></div>
+        <div>Positions <div style="font-weight:700">${(inv.positions||[]).length}</div></div>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn btn-p btn-sm" onclick="invAdminFund('${c.id}')"><i class="fas fa-plus"></i> Fund</button>
+        <button type="button" class="btn btn-warn btn-sm" onclick="invAdminLock('${c.id}')"><i class="fas fa-lock"></i> Lock amount</button>
+        <button type="button" class="btn btn-ok btn-sm" onclick="invAdminUnlock('${c.id}')"><i class="fas fa-lock-open"></i> Unlock all</button>
+        <button type="button" class="btn btn-g btn-sm" onclick="invAdminToggleRestrict('${c.id}')"><i class="fas fa-ban"></i> ${inv.restricted?'Unrestrict':'Restrict'}</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.invAdminFund=async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c) return;
+  const inv=ensureInvCust(c);
+  const raw=prompt('Fund investment wallet '+inv.walletId+' — amount (USD):','100');
+  if(raw==null) return;
+  const amt=parseFloat(raw);
+  if(!(amt>0)){ toast('Invalid amount','error'); return; }
+  inv.cash=Math.round(((inv.cash||0)+amt)*100)/100;
+  inv.signedUp=true;
+  inv.history=inv.history||[];
+  inv.history.unshift({type:'admin_fund',amount:amt,timestamp:new Date().toISOString()});
+  await saveBin();
+  toast('Funded '+money(amt));
+  renderInvWallets();
+};
+
+window.invAdminLock=async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c) return;
+  const inv=ensureInvCust(c);
+  const raw=prompt('Lock amount from available cash (USD). Available: '+money(inv.cash||0), String(Math.min(100,inv.cash||0)));
+  if(raw==null) return;
+  const amt=parseFloat(raw);
+  if(!(amt>0)){ toast('Invalid amount','error'); return; }
+  if((inv.cash||0)<amt){ toast('Not enough available cash','error'); return; }
+  inv.cash=Math.round((inv.cash-amt)*100)/100;
+  inv.locked=Math.round(((inv.locked||0)+amt)*100)/100;
+  await saveBin();
+  toast('Locked '+money(amt));
+  renderInvWallets();
+};
+
+window.invAdminUnlock=async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c) return;
+  const inv=ensureInvCust(c);
+  const locked=inv.locked||0;
+  if(locked<=0){ toast('Nothing locked'); return; }
+  inv.cash=Math.round(((inv.cash||0)+locked)*100)/100;
+  inv.locked=0;
+  await saveBin();
+  toast('Unlocked '+money(locked));
+  renderInvWallets();
+};
+
+window.invAdminToggleRestrict=async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c) return;
+  const inv=ensureInvCust(c);
+  inv.restricted=!inv.restricted;
+  await saveBin();
+  toast(inv.restricted?'Wallet restricted (withdraw to checking still allowed)':'Wallet unrestricted');
+  renderInvWallets();
+};
+
+window.saveInvEngine=async function(sym){
+  S.investmentConfig=S.investmentConfig||{};
+  const mode=($('invEng-'+sym+'-mode')||{}).value||'pause';
+  const rate=parseFloat(($('invEng-'+sym+'-rate')||{}).value)||0;
+  const intervalMs=parseInt(($('invEng-'+sym+'-interval')||{}).value,10)||480000;
+  S.investmentConfig[sym]={mode,ratePercent:rate,intervalMs,lastTick:new Date().toISOString()};
+  await saveBin();
+  toast(sym+' engine saved: '+mode+' '+rate+'% / '+(intervalMs/1000)+'s');
+  renderInvWallets();
+};
+
+
+
+/* ===== Savings wallets (admin) ===== */
+function ensureSavCust(c){
+  if(typeof c.savingsBalance!=='number') c.savingsBalance=0;
+  if(typeof c.savingsLocked!=='number') c.savingsLocked=0;
+  if(!Array.isArray(c.savingsPots)) c.savingsPots=[];
+  if(!Array.isArray(c.savingsHistory)) c.savingsHistory=[];
+  if(!c.savingsWalletId){
+    const digits=String(Math.floor(100+Math.random()*900));
+    const letters=Array.from({length:3},()=>String.fromCharCode(65+Math.floor(Math.random()*26))).join('');
+    c.savingsWalletId=digits+letters;
+  }
+  return c;
+}
+
+window.renderSavWallets=function(){
+  const el=$('savWalletList');
+  if(!el) return;
+  const rows=(S.customers||[]).map(c=>{ ensureSavCust(c); return c; });
+  if(!rows.length){ el.innerHTML='<div class="empty">No customers</div>'; return; }
+  el.innerHTML=rows.map(c=>{
+    const locked=c.savingsLocked||0;
+    const bal=c.savingsBalance||0;
+    return `<div class="wallet-row" style="border:1px solid var(--g200);border-radius:12px;margin-bottom:12px;padding:14px">
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px">
+        <div><strong>${esc(c.name||'Customer')}</strong>
+          <div style="font-size:.82rem;color:var(--g500)">${esc(c.accountNumber||'')} · Savings ID <span style="font-family:monospace;font-weight:700;color:var(--p)">${esc(c.savingsWalletId)}</span></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;font-size:.88rem">
+        <div>Balance <div class="bal">${money(bal)}</div></div>
+        <div>Locked <div style="font-weight:700;color:var(--bad)">${money(locked)}</div></div>
+        <div>Available <div style="font-weight:700">${money(Math.max(0,bal-locked))}</div></div>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn btn-p btn-sm" onclick="savAdminFund('${c.id}')"><i class="fas fa-plus"></i> Fund</button>
+        <button type="button" class="btn btn-bad btn-sm" onclick="savAdminDeduct('${c.id}')"><i class="fas fa-minus"></i> Deduct</button>
+        <button type="button" class="btn btn-ok btn-sm" onclick="savAdminUnlock('${c.id}')"><i class="fas fa-lock-open"></i> Unlock locked</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+
+window.savAdminFund=async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c) return;
+  ensureSavCust(c);
+  const raw=prompt('Fund savings wallet '+c.savingsWalletId+' — amount (USD):','100');
+  if(raw==null) return;
+  const amt=parseFloat(raw);
+  if(!(amt>0)){ toast('Invalid amount','error'); return; }
+  c.savingsBalance=Math.round(((c.savingsBalance||0)+amt)*100)/100;
+  c.savingsHistory=c.savingsHistory||[];
+  c.savingsHistory.unshift({type:'admin_fund',dir:'in',amount:amt,label:'Admin funded savings',timestamp:new Date().toISOString()});
+  await saveBin();
+  toast('Funded savings '+money(amt));
+  renderSavWallets();
+};
+
+window.savAdminDeduct=async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c) return;
+  ensureSavCust(c);
+  const avail=Math.max(0,(c.savingsBalance||0)-(c.savingsLocked||0));
+  const raw=prompt('Deduct from available savings (not locked). Available: '+money(avail), String(Math.min(50,avail)));
+  if(raw==null) return;
+  const amt=parseFloat(raw);
+  if(!(amt>0)){ toast('Invalid amount','error'); return; }
+  if(avail<amt){ toast('Not enough available (locked funds protected)','error'); return; }
+  c.savingsBalance=Math.round((c.savingsBalance-amt)*100)/100;
+  c.savingsHistory=c.savingsHistory||[];
+  c.savingsHistory.unshift({type:'admin_deduct',dir:'out',amount:amt,label:'Admin deducted savings',timestamp:new Date().toISOString()});
+  await saveBin();
+  toast('Deducted '+money(amt));
+  renderSavWallets();
+};
+
+window.savAdminUnlock=async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c) return;
+  ensureSavCust(c);
+  const locked=c.savingsLocked||0;
+  if(locked<=0){ toast('No locked savings'); return; }
+  if(!confirm('Unlock $'+locked.toFixed(2)+' locked savings for '+c.name+'? Customer will then be able to withdraw.')) return;
+  c.savingsLocked=0;
+  (c.savingsPots||[]).forEach(p=>{ p.locked=false; p.unlockAt=new Date().toISOString(); });
+  c.savingsHistory=c.savingsHistory||[];
+  c.savingsHistory.unshift({type:'admin_unlock',amount:locked,label:'Admin unlocked term savings',timestamp:new Date().toISOString()});
+  await saveBin();
+  toast('Unlocked '+money(locked));
+  renderSavWallets();
+};
+
+
+
+/* ===== KYC admin ===== */
+S.kycTab = S.kycTab || 'pending';
+window.kycTab = function(tab){
+  S.kycTab = tab;
+  ['pending','all','verified','rejected'].forEach(function(t){
+    const el = $('kycTab'+(t==='pending'?'Pending':t==='all'?'All':t==='verified'?'Verified':'Rejected'));
+    if(el){ el.className = 'btn btn-sm ' + (t===tab?'btn-p':'btn-g'); }
+  });
+  renderKyc();
+};
+window.renderKyc = function(){
+  const el = $('kycList');
+  if(!el) return;
+  const tab = S.kycTab || 'pending';
+  let rows = (S.customers||[]).filter(c=>c.kyc && c.kyc.status);
+  if(tab==='pending') rows = rows.filter(c=>c.kyc.status==='pending'||c.kyc.status==='submitted');
+  else if(tab==='verified') rows = rows.filter(c=>c.kyc.status==='verified'||c.kyc.status==='approved');
+  else if(tab==='rejected') rows = rows.filter(c=>c.kyc.status==='rejected'||c.kyc.status==='failed');
+  rows.sort((a,b)=> new Date((b.kyc&&b.kyc.submittedAt)||0) - new Date((a.kyc&&a.kyc.submittedAt)||0));
+  if(!rows.length){ el.innerHTML='<div class="empty">No KYC records in this view</div>'; return; }
+  el.innerHTML = rows.map(c=>{
+    const k = c.kyc || {};
+    const st = k.status||'pending';
+    const stCls = (st==='verified'||st==='approved')?'st-a':(st==='rejected'||st==='failed')?'st-f':'st-p';
+    const imgs = [
+      k.idFront?`<div><div style="font-size:.7rem;text-transform:uppercase;color:var(--g400);margin-bottom:4px">ID front</div><img src="${k.idFront}" alt="" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--g200)"/></div>`:'',
+      k.idBack?`<div><div style="font-size:.7rem;text-transform:uppercase;color:var(--g400);margin-bottom:4px">ID back</div><img src="${k.idBack}" alt="" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--g200)"/></div>`:'',
+      k.selfie?`<div><div style="font-size:.7rem;text-transform:uppercase;color:var(--g400);margin-bottom:4px">Selfie</div><img src="${k.selfie}" alt="" style="max-width:100%;max-height:160px;border-radius:8px;border:1px solid var(--g200)"/></div>`:''
+    ].filter(Boolean).join('');
+    return `<div class="wallet-row" style="border:1px solid var(--g200);border-radius:12px;margin-bottom:14px;padding:16px">
+      <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div>
+          <strong>${esc(c.name||'')}</strong>
+          <div style="font-size:.82rem;color:var(--g500)">${esc(c.accountNumber||'')} · ${esc(c.email||'')}</div>
+        </div>
+        <span class="st ${stCls}">${esc(st)}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.88rem;margin-bottom:12px">
+        <div><span style="color:var(--g400);font-size:.7rem;text-transform:uppercase">Legal name</span><div>${esc(k.legalName||'—')}</div></div>
+        <div><span style="color:var(--g400);font-size:.7rem;text-transform:uppercase">DOB</span><div>${esc(k.dob||'—')}</div></div>
+        <div><span style="color:var(--g400);font-size:.7rem;text-transform:uppercase">ID type</span><div>${esc(k.idType||'—')}</div></div>
+        <div><span style="color:var(--g400);font-size:.7rem;text-transform:uppercase">ID number</span><div>${esc(k.idNumber||'—')}</div></div>
+        <div style="grid-column:1/-1"><span style="color:var(--g400);font-size:.7rem;text-transform:uppercase">Address</span><div>${esc(k.address||'—')}</div></div>
+        <div style="grid-column:1/-1"><span style="color:var(--g400);font-size:.7rem;text-transform:uppercase">Submitted</span><div>${fmt(k.submittedAt)}</div></div>
+        ${k.rejectReason?`<div style="grid-column:1/-1;color:var(--bad)"><strong>Reject reason:</strong> ${esc(k.rejectReason)}</div>`:''}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px">${imgs||'<div style="color:var(--g400)">No images</div>'}</div>
+      <div class="acts">
+        ${(st==='pending'||st==='submitted'||st==='rejected')?`<button type="button" class="btn btn-ok btn-sm" onclick="kycApprove('${c.id}')"><i class="fas fa-check"></i> Approve</button>`:''}
+        ${(st==='pending'||st==='submitted')?`<button type="button" class="btn btn-bad btn-sm" onclick="kycReject('${c.id}')"><i class="fas fa-times"></i> Reject</button>`:''}
+        <button type="button" class="btn btn-g btn-sm" onclick="openC('${c.id}')">Open profile</button>
+      </div>
+    </div>`;
+  }).join('');
+};
+window.kycApprove = async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c||!c.kyc) return;
+  c.kyc.status='verified';
+  c.kyc.investmentStatus='verified';
+  c.kyc.reviewedAt=new Date().toISOString();
+  c.kyc.rejectReason='';
+  c.kycVerified=true;
+  c.investmentKycVerified=true;
+  c.investmentKycStatus='verified';
+  if(!c.investments) c.investments={cash:0,locked:0,positions:[],history:[],walletId:'',restricted:false,signedUp:false};
+  c.investments.signedUp=true;
+  S.messages=S.messages||[];
+  S.messages.unshift({
+    id:gid('m'), fromType:'admin', fromId:'admin', fromName:'City Legacy Compliance',
+    toType:'customer', toId:c.id, toName:c.name, toAccount:c.accountNumber,
+    subject:'KYC approved — Investment portal unlocked',
+    body:'Hello '+c.name+',\n\nYour identity verification (KYC) has been approved by City Legacy Bank.\n\nYour investment portal is now available. Sign in and open Investments to begin.\n\n— City Legacy Bank Compliance',
+    timestamp:new Date().toISOString(), read:false, msgType:'kyc_result'
+  });
+  await saveBin();
+  toast('KYC approved — investment unlocked');
+  renderKyc(); badges();
+};
+window.kycReject = async function(id){
+  const c=(S.customers||[]).find(x=>x.id===id); if(!c||!c.kyc) return;
+  const reason=prompt('Rejection reason (shown to customer):','Document image unclear. Please resubmit a clearer photo of your ID and selfie.');
+  if(reason==null) return;
+  c.kyc.status='rejected';
+  c.kyc.reviewedAt=new Date().toISOString();
+  c.kyc.rejectReason=reason.trim()||'Documents could not be verified';
+  c.kycVerified=false;
+  S.messages=S.messages||[];
+  S.messages.unshift({
+    id:gid('m'), fromType:'admin', fromId:'admin', fromName:'City Legacy Compliance',
+    toType:'customer', toId:c.id, toName:c.name, toAccount:c.accountNumber,
+    subject:'Identity verification needs attention',
+    body:'Hello '+c.name+',\n\nYour KYC submission was not approved.\n\nReason: '+c.kyc.rejectReason+'\n\nPlease open Settings → Identity verification and resubmit.\n\n— City Legacy Bank Compliance',
+    timestamp:new Date().toISOString(), read:false, msgType:'kyc_result'
+  });
+  await saveBin();
+  toast('KYC rejected');
+  renderKyc(); badges();
+};
+
+// badge counter
+const _badgesKyc = window.badges;
+window.badges = function(){
+  if(typeof _badgesKyc==='function') try{ _badgesKyc(); }catch(e){}
+  const n = (S.customers||[]).filter(c=>c.kyc && (c.kyc.status==='pending'||c.kyc.status==='submitted')).length;
+  const b=$('b-kyc'); if(b){ if(n){b.textContent=String(n);b.classList.remove('hidden');} else b.classList.add('hidden'); }
+};
+
+
+
+function randomJoinDate(){
+  // Inclusive range: 2024-03-21 .. 2025-12-29
+  const start=new Date(Date.UTC(2024,2,21)).getTime();
+  const end=new Date(Date.UTC(2025,11,29,23,59,59)).getTime();
+  const t=start+Math.floor(Math.random()*(end-start+1));
+  const d=new Date(t);
+  const pad=n=>String(n).padStart(2,'0');
+  return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate());
+}
+function joinInRange(j){
+  if(!j) return false;
+  const s=String(j).slice(0,10);
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  return s>='2024-03-21' && s<='2025-12-29';
+}
+window.normalizeCustomerJoinDates=function(forceAll){
+  let n=0;
+  (S.customers||[]).forEach(c=>{
+    const cur=c.joined||c.createdAt||'';
+    if(forceAll || !joinInRange(cur)){
+      const j=randomJoinDate();
+      c.joined=j;
+      c.createdAt=j+'T12:00:00.000Z';
+      n++;
+    }
+  });
+  return n;
+};
+window.adminRandomizeJoinDates=async function(){
+  if(!confirm('Set every customer join date to a random day between Mar 21 2024 and Dec 29 2025?')) return;
+  const n=normalizeCustomerJoinDates(true);
+  await saveBin();
+  toast('Updated join dates for '+n+' customer(s)');
+  render();
+};
+window.adminRandomizeOneJoin=async function(customerId){
+  const c=(S.customers||[]).find(x=>x.id===customerId);
+  if(!c){ toast('Customer not found','error'); return; }
+  if(!confirm('Randomize join date for '+c.name+' ('+(c.accountNumber||'')+') between Mar 21 2024 and Dec 29 2025?')) return;
+  const j=randomJoinDate();
+  c.joined=j;
+  c.createdAt=j+'T12:00:00.000Z';
+  await saveBin();
+  toast(c.name+' joined set to '+j);
+  if(S.cur===c.id && typeof openC==='function') openC(c.id);
+  render();
+};
+
+
+setInterval(async()=>{if(sessionStorage.getItem('clb_admin')!=='1'||S.saving)return;await loadBin();render()},20000);
+if(sessionStorage.getItem('clb_admin')==='1')showDash();
+</script>
+
+<div id="restrict-modal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-h">
+      <h3 id="rm-title">Restriction</h3>
+      <button type="button" class="x" id="rm-x">&times;</button>
+    </div>
+    <div class="modal-b">
+      <p id="rm-who" style="margin-bottom:12px;color:var(--g600);font-size:.9rem"></p>
+      <div class="fg">
+        <label>Penalty type</label>
+        <select id="rm-type">
+          <option value="restriction">Restricted</option>
+          <option value="frozen">Frozen</option>
+          <option value="suspended">Suspended (agents)</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Reason shown to customer / agent</label>
+        <textarea id="rm-reason" placeholder="e.g. Identity verification incomplete. Contact support."></textarea>
+      </div>
+      <div class="fa">
+        <button type="button" class="btn btn-g" id="rm-cancel">Cancel</button>
+        <button type="button" class="btn btn-ok" id="rm-relieve"><i class="fas fa-check"></i> Relieve penalty</button>
+        <button type="button" class="btn btn-bad" id="rm-save"><i class="fas fa-ban"></i> Apply / update reason</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function wire(){
+    var save = $('rm-save');
+    var relieve = $('rm-relieve');
+    var x = $('rm-x');
+    var cancel = $('rm-cancel');
+    if(save) save.onclick = function(e){
+      e.preventDefault();
+      if(typeof window.applyRestrictReason === 'function') window.applyRestrictReason();
+    };
+    if(relieve) relieve.onclick = async function(e){
+      e.preventDefault();
+      var st = window.S && window.S.restrictTarget;
+      if(!st){ if(typeof toast==='function') toast('No account selected','error'); return; }
+      if(typeof window.relievePenalty === 'function') await window.relievePenalty(st.kind, st.id);
+      var m = $('restrict-modal'); if(m) m.classList.add('hidden');
+    };
+    if(x) x.onclick = function(){ var m=$('restrict-modal'); if(m) m.classList.add('hidden'); };
+    if(cancel) cancel.onclick = function(){ var m=$('restrict-modal'); if(m) m.classList.add('hidden'); };
+  }
+  wire();
+})();
+</script>
+
+<div id="wallet-reply-modal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-h">
+      <h3>Reply — Wallet Address</h3>
+      <button type="button" class="x" id="wr-x">&times;</button>
+    </div>
+    <div class="modal-b">
+      <p id="wr-who" style="margin-bottom:12px;color:var(--g600);font-size:.9rem"></p>
+      <div class="fg"><label>Subject</label><input id="wr-subj" value="Your crypto wallet address request"/></div>
+      <div class="fg"><label>Message to customer (sent to their mail)</label>
+        <textarea id="wr-body" placeholder="Here is your requested wallet address: …"></textarea>
+      </div>
+      <div class="fg"><label>Wallet address (optional — included in message)</label>
+        <input id="wr-addr" placeholder="e.g. 0x… or bc1…"/>
+      </div>
+      <div class="fa">
+        <button type="button" class="btn btn-g" id="wr-cancel">Cancel</button>
+        <button type="button" class="btn btn-p" id="wr-send"><i class="fas fa-paper-plane"></i> Send to customer mail</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
